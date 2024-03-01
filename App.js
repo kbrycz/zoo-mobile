@@ -16,6 +16,9 @@ import PhoneNumberScreen from './src/screens/auth/PhoneNumberScreen';
 import VerifyPhoneScreen from './src/screens/auth/VerifyPhoneScreen';
 import EnterNameScreen from './src/screens/auth/EnterNameScreen';
 import EnterPreferencesScreen from './src/screens/auth/EnterPreferencesScreen';
+import AddPictureScreen from './src/screens/auth/AddPictureScreen';
+import FinalPageScreen from './src/screens/auth/FinalPageScreen';
+import DoneScreen from './src/screens/auth/DoneScreen';
 
 // Creates stack for the Authentication screens
 const Auth = createStackNavigator();
@@ -31,6 +34,8 @@ const AuthStack = () => {
         <Auth.Screen name="VerifyPhoneScreen" component={VerifyPhoneScreen} />
         <Auth.Screen name="EnterNameScreen" component={EnterNameScreen} />
         <Auth.Screen name="EnterPreferencesScreen" component={EnterPreferencesScreen} />
+        <Auth.Screen name="AddPictureScreen" component={AddPictureScreen} />
+        <Auth.Screen name="FinalPageScreen" component={FinalPageScreen} />
     </Auth.Navigator>
   )
 }
@@ -44,7 +49,7 @@ const MainStackScreen = () => {
       screenOptions={{
         headerShown: false,
       }}>
-        <MainStack.Screen name="AuthScreen" component={AuthScreen} />
+        <MainStack.Screen name="DoneScreen" component={DoneScreen} />
     </MainStack.Navigator>
   )
 }

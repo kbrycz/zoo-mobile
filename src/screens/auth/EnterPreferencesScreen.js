@@ -79,11 +79,9 @@ class EnterPreferencesScreen extends React.Component {
         last: this.props.route.params.last,
         birthdate: this.props.route.params.birthdate,
         number: this.props.route.params.number,
-        status: this.state.status,
         gender: this.state.gender,
-        interested: this.state.interested
     }
-    this.props.navigation.navigate('EnterZipScreen', obj)
+    this.props.navigation.navigate('AddPictureScreen', obj)
   }
 
   // Renders the jsx for the UI
