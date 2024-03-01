@@ -19,6 +19,7 @@ import EnterPreferencesScreen from './src/screens/auth/EnterPreferencesScreen';
 import AddPictureScreen from './src/screens/auth/AddPictureScreen';
 import FinalPageScreen from './src/screens/auth/FinalPageScreen';
 import DoneScreen from './src/screens/auth/DoneScreen';
+import HomeScreen from './src/screens/home/HomeScreen';
 
 // Creates stack for the Authentication screens
 const Auth = createStackNavigator();
@@ -40,6 +41,111 @@ const AuthStack = () => {
   )
 }
 
+// Creates stack for the Home screens
+const HomeStack = createStackNavigator();
+const HomeStackScreen = () => {
+  
+  return (
+    <HomeStack.Navigator 
+      initialRouteName="HomeScreen"
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <HomeStack.Screen name="HomeScreen" component={HomeScreen} />
+    </HomeStack.Navigator>
+  )
+}
+
+// Creates stack for the Tab screen
+const Tab = createBottomTabNavigator();
+const TabStack = () => {
+return (
+    <Tab.Navigator
+      screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            switch(route.name) {
+              case 'Home':
+                if (!focused) {
+                  return <Ionicons name='home-outline' size={size} color={color} />
+                }
+                return <Ionicons name='home' size={size} color={color} />
+              case 'Chat':
+                if (!focused) {
+                  return <Ionicons name="chatbox-outline" size={size} color={color} />
+                }
+                return <Ionicons  name="chatbox" size={size} color={color} />
+              case 'Notifications':
+                if (!focused) {
+                  return <Ionicons name="notifications-outline" size={size} color={color} />
+                }
+                return <Ionicons name="notifications" size={size} color={color} />
+              case 'Profile':
+                if (!focused) {
+                  return <Ionicons name="person-outline" size={size} color={color} />
+                }
+                return <Ionicons name="person" size={size} color={color} />
+              case 'Pebble':
+                if (!focused) {
+                  return <View style={styles.circle}>
+                              <Image style={styles.image} 
+                                source={require('./assets/general/centerButton.png')} 
+                                resizeMode="contain" />
+                          </View>
+                }
+                return <View style={[styles.circle, styles.circleHighlighted]}>
+                          <Image style={styles.image} 
+                            source={require('./assets/general/centerButtonFocused.png')} 
+                            resizeMode="contain" />
+                      </View>
+            }
+          },
+          tabBarShowLabel: false,
+          tabBarInactiveTintColor: Color.MAIN,
+          tabBarActiveTintColor: Color.MAIN,
+          headerShown: false,
+          tabBarStyle: {
+            height: Dimensions.get('window').height * .09,
+            paddingTop: 10,
+            borderTopWidth: 0,
+            shadowColor: "#000000",
+            shadowOpacity: 0.2,
+            shadowRadius: 1,
+            shadowOffset: {
+              height: 1,
+              width: 1
+            },
+            elevation: 3
+          },
+        })}>
+        <Tab.Screen options={{ tabBarVisible: false }} name="Home" component={HomeStackScreen} listeners={() => ({
+            tabPress: () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            },
+          })}/>
+        <Tab.Screen name="Chat" component={HomeStackScreen} listeners={() => ({
+            tabPress: () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            },
+          })}/>
+        <Tab.Screen name="Pebble" component={HomeStackScreen} listeners={() => ({
+            tabPress: () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            },
+          })}/>
+        <Tab.Screen name="Notifications" component={HomeStackScreen} listeners={() => ({
+            tabPress: () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            },
+          })}/>
+        <Tab.Screen name="Profile" component={HomeStackScreen} listeners={() => ({
+            tabPress: () => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+            },
+          })}/>
+      </Tab.Navigator>
+  )
+}
+
 // Creates stack for the Profile slide screens
 const MainStack = createStackNavigator();
 const MainStackScreen = () => {
@@ -50,6 +156,7 @@ const MainStackScreen = () => {
         headerShown: false,
       }}>
         <MainStack.Screen name="DoneScreen" component={DoneScreen} />
+        <MainStack.Screen name='Tab' component={TabStack} />
     </MainStack.Navigator>
   )
 }

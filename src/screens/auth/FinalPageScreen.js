@@ -40,33 +40,23 @@ class FinalPageScreen extends React.Component {
   getStarted = async () => {
     this.setState({loadingData: true, errorMessage: false})
     try {
-    //   // Send the users data to the server to see if they can create an account
-    //   let userObj = {
-    //     first: this.props.route.params.first,
-    //     last: this.props.route.params.last,
-    //     birthdate: this.props.route.params.birthdate,
-    //     number: this.props.route.params.number,
-    //     showProfile: this.props.route.params.showProfile,
-    //     gender: this.props.route.params.gender,
-    //     interested: this.props.route.params.interested,
-    //     photos: this.props.route.params.photos,
-    //     about: this.props.route.params.about,
-    //     interests: this.props.route.params.interests,
-    //     location: this.props.route.params.location,
-    //     job: this.props.route.params.job,
-    //     hometown: this.props.route.params.hometown,
-    //     education: this.props.route.params.education,
-    //     prompts: this.props.route.params.prompts,
-    //     meme: this.props.route.params.meme,
-    //   }
-    //   const response = await api.post('/signup', { userObj })
+      // Send the users data to the server to see if they can create an account
+      let userObj = {
+        first: this.props.route.params.first,
+        last: this.props.route.params.last,
+        birthdate: this.props.route.params.birthdate,
+        number: this.props.route.params.number,
+        gender: this.props.route.params.gender,
+        profilePicture: this.props.route.params.profilePicture,
+      }
+      const response = await api.post('/signup', { userObj })
 
-    //   if (!response || !response.data) {
-    //       throw "Unable to sign up user at this time"
-    //   }
+      if (!response || !response.data) {
+          throw "Unable to sign up user at this time"
+      }
 
-    //   // Set the token in Async storage so user will log in automatically
-    //   await AsyncStorage.setItem('token', response.data.token)
+      // Set the token in Async storage so user will log in automatically
+      await AsyncStorage.setItem('token', response.data.token)
 
       // Reset error message 
       this.setState({

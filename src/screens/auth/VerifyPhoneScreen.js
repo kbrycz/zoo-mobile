@@ -62,9 +62,6 @@ class VerifyPhoneScreen extends React.Component {
   submitCode = async () => {
       this.setState({errorMessage: "", loadingData: true})
 
-      this.props.navigation.navigate('EnterNameScreen', {number: this.state.number})
-      return
-
       // Check if code matches the correct one
       if (this.state.code.length !== 5) {
         this.setState({errorMessage: "Code did not match!", loadingData: false})

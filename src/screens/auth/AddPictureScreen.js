@@ -22,7 +22,7 @@ class AddPictureScreen extends React.Component {
     this.state = {
       loading: true,
       loadingData: false,
-      picture: null,
+      profilePicture: null,
       currentImageView: '',
       viewModalVisible: false,
       activePhoto: -1,
@@ -108,7 +108,7 @@ class AddPictureScreen extends React.Component {
           }
           
           this.setState({
-            picture: data,
+            profilePicture: data,
             loadingData: false
           })
         }
@@ -129,7 +129,7 @@ class AddPictureScreen extends React.Component {
   // View photo of picture
   viewPhoto = async () => {
     this.setState({
-        currentImageView: this.state.picture.uri,
+        currentImageView: this.state.profilePicture.uri,
         viewModalVisible: true
     })
   }
@@ -138,7 +138,7 @@ class AddPictureScreen extends React.Component {
   deletePhoto = async () => {
       this.setState({loadingData: true})
       this.setState({
-        picture: null
+        profilePicture: null
       }, () => {
           this.setState({loadingData: false})
       })
@@ -182,7 +182,7 @@ class AddPictureScreen extends React.Component {
       birthdate: this.props.route.params.birthdate,
       number: this.props.route.params.number,
       gender: this.props.route.params.gender,
-      picture: this.state.picture,
+      profilePicture: this.state.profilePicture,
     }
     this.props.navigation.navigate('FinalPageScreen', userObj)
   }
@@ -218,7 +218,7 @@ class AddPictureScreen extends React.Component {
                         <Text style={styles.question}>We'll see this when you scan in to verify who you are!</Text>
                         <Text style={styles.subNote}>Please use a picture of yourself!</Text>
                         {
-                            !this.state.picture
+                            !this.state.profilePicture
                             ? <View style={styles.imagesView}>
                                 <TouchableOpacity onPress={this.addPhoto}>
                                     <View style={styles.addImageContainer}>
@@ -231,12 +231,12 @@ class AddPictureScreen extends React.Component {
                                 </TouchableOpacity>
                                 </View>
                             : <TouchableOpacity onPress={() => this.photoActionButton()} style={styles.imageContainer}>
-                                <BetterImage style={styles.image} source={{uri: this.state.picture.uri}} />
+                                <BetterImage style={styles.image} source={{uri: this.state.profilePicture.uri}} />
                             </TouchableOpacity>
                         }
                         
                         {
-                            this.state.picture
+                            this.state.profilePicture
                             ? <Text style={styles.hint}>* Click to view or delete.</Text>
                             : null
                         }
@@ -248,7 +248,7 @@ class AddPictureScreen extends React.Component {
                     </View>
                     
                     {
-                        !this.state.picture || this.state.loadingData
+                        !this.state.profilePicture || this.state.loadingData
                         ?   <View style={[styles.button, styles.button2]}>
                                 <Text style={[styles.buttonText, styles.buttonText2]}>Continue</Text>
                             </View>
