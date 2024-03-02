@@ -20,7 +20,7 @@ import { Store } from '../../redux/store';
 
 
 // Home screen for all posts
-class HomeScreen extends React.Component {
+class MapScreen extends React.Component {
 
   // Initialize the Home screen state
   constructor() {
@@ -29,17 +29,9 @@ class HomeScreen extends React.Component {
         refreshing: false,
         loading: true,
         loadingData: false,
-        posts: [],
         token: null,
         user: {},
-        postIds: new Set(),
-        loadingMorePosts: true,
-        postPage: 0,
         connectionModalVisible: false,
-        accountDeletedModalVisible: false,
-        doneWithPosts: false,
-        loggingOut: false,
-        timerPosts: false
     }
   } 
 
@@ -56,23 +48,15 @@ class HomeScreen extends React.Component {
     }
   }
 
-  // Tests connection when component loads, also always keeps the user up to date
+
   // Tests connection when component loads, also always keeps the user up to date
   componentDidMount() {
     InteractionManager.runAfterInteractions(async () => {
+      // this.checkForUpdates()
       await this.loadEverything()
-    })
-    this.unsubscribe = Store.subscribe(() => {
-      if (!this.state.loggingOut) {
-        this.setState({user: Store.getState().user})
-      }
+      // Gets the setup modal to start
     })
   } 
-
-  // Unsubscribes before the component closes TODO
-  componentWillUnmount() {
-    this.unsubscribe()
-  }
 
   // Sets the loading variable
   setLoadingData = (isLoading) => {
@@ -111,74 +95,30 @@ class HomeScreen extends React.Component {
     }
   }
 
-  // Load all of the asyncs before loading page
+  // Load everything before loading screen
   loadEverything = async () => {
-    console.log("loading everything")
-
-    // Loads all the fonts
-    await Font.loadAsync({
-      'QuicksandMedium': require('../../../assets/fonts/Quicksand-Medium.ttf'),
-      'QuicksandSemiBold': require('../../../assets/fonts/Quicksand-SemiBold.ttf'),
-      'QuicksandBold': require('../../../assets/fonts/Quicksand-Bold.ttf'),
-    });
-
-    // Get the user obj and token from correct place
-    await this.getUserInfo()
-
-    // Delays the refreshing of posts since the splash screen shows up first
-    setTimeout(() => {
-      this.setState({timerPosts: true})
-    }, 3000);
-
-    this.setState({loading: false})
-  }
-
-  // Updates all of the necessary data from the server when user trys to refresh
-  onRefresh = () => {
-    this.setState({refreshing: true, doneWithPosts: false, postPage: 0, timerPosts: false}, () => {
-
-      this.loadEverything()
-
-      // setting timeout for more natural look on refresh
-      setTimeout(() => {
-        this.setState({
-          refreshing: false,
-          timerPosts: true
-        })
-      }, 1000)
+    console.log("loading everything for profile")
+    let tokenTemp = await AsyncStorage.getItem('token')
+    let user = Store.getState().user
+    this.setState({
+      user: user,
+      token: tokenTemp,
+      loading: false
     })
-  }
-
-  // Logs the user out of the app
-  logOut = async () => {
-    this.setState({accountDeletedModalVisible: false, loggingOut: true}, async () => {
-      await AsyncStorage.removeItem('token')
-      
-      this.props.navigation.reset({
-          index: 0,
-          routes: [{name: 'Auth'}],
-      });
-    })
-  }
+}
 
 
   // Renders the jsx for the UI
   render() {
     return (
             <LinearGradient style={styles.grad} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4, Color.GRADIENT5,Color.GRADIENT6]} start={{ x: 0, y: .1 }} end={{ x: 1, y: .9 }}>
-              {
-                this.state.loading
-                ? null
-                : <DeletedAccountModal modalVisible={this.state.accountDeletedModalVisible} setModalVisible={this.setAccountDeletedModalVisible} logOut={this.logOut} />
-              }
-            
               <NoConnectionModal modalVisible={this.state.connectionModalVisible} setModalVisible={this.setConnectionModalVisible} testConnection={this.testConnection} />
                 <SafeAreaView style={{paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
                     <View style={styles.textContainer}>
                       {
                         this.state.loading || !this.state.user || Object.keys(this.state.user).length == 0
                         ? <Text style={styles.headerTextFake}></Text>
-                        : <Text style={styles.headerText}>Home</Text>
+                        : <Text style={styles.headerText}>Map</Text>
                       }
                     </View>
                     <View style={styles.whiteContainer}>
@@ -202,9 +142,6 @@ const styles = StyleSheet.create({
     marginTop: Dimensions.get('window').height * .03,
     height: Dimensions.get('window').height * .8,
   },
-  list: {
-    height: Dimensions.get('window').height,
-  },
   line: {
     marginTop: Dimensions.get('window').height * .03,
     width: Dimensions.get('window').width * .2,
@@ -212,28 +149,6 @@ const styles = StyleSheet.create({
     backgroundColor: Color.LIGHT_BORDER,
     borderRadius: 1000,
     height: 4,
-  },
-  iconContainer: {
-    position: 'absolute',
-    bottom: Dimensions.get('window').height * .36,
-    right: Dimensions.get('window').width * .05,
-    opacity: .8
-  },
-  viewDetailsIcon: {
-    fontSize: Dimensions.get('window').height * .035,
-    color: Color.WHITE,
-    padding: Dimensions.get('window').height * .023,
-    paddingHorizontal: Dimensions.get('window').height * .023,
-    borderRadius: Dimensions.get('window').height * .03,
-    overflow: 'hidden'
-  },
-  writePostIcon: {
-    fontSize: Dimensions.get('window').height * .04,
-    color: Color.WHITE,
-    padding: Dimensions.get('window').height * .02,
-    paddingHorizontal: Dimensions.get('window').height * .02,
-    borderRadius: Dimensions.get('window').height * .03,
-    overflow: 'hidden'
   },
   textContainer: {
     height: Dimensions.get('window').height * .1,
@@ -259,25 +174,6 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 2
   },
-  addButton: {
-    position: 'absolute',
-    top: Dimensions.get('window').height * .035,
-    right: 0,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  helpButton: {
-    position: 'absolute',
-    top: Dimensions.get('window').height * .035,
-    left: 0,
-    borderRadius: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-  },
-  addIcon: {
-    fontSize: Dimensions.get('window').height * .025,
-    padding: Dimensions.get('window').height * .014,
-    color: Color.WHITE,
-  },
 })
 
-export default HomeScreen
+export default MapScreen

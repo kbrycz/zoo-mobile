@@ -1,5 +1,7 @@
 import api from '../api/server'
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { Store } from '../redux/store';
+import { setUser } from '../redux/actions';
 
 // Gets all of the user data from api and returns a promise of the user obj
 // If call has no changes, returns what is saved in AsyncStorage
@@ -12,6 +14,7 @@ export async function getlocalUserData (token) {
             return storedUser
         }
         else {
+            Store.dispatch(setUser(response.data.user))
             await AsyncStorage.setItem('user', JSON.stringify(response.data.user));
             return response.data.user 
         }

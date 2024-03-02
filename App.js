@@ -20,6 +20,10 @@ import AddPictureScreen from './src/screens/auth/AddPictureScreen';
 import FinalPageScreen from './src/screens/auth/FinalPageScreen';
 import DoneScreen from './src/screens/auth/DoneScreen';
 import HomeScreen from './src/screens/home/HomeScreen';
+import MapScreen from './src/screens/map/MapScreen';
+import CenterScreen from './src/screens/center/CenterScreen';
+import RewardsScreen from './src/screens/rewards/RewardsScreen';
+import ProfileScreen from './src/screens/profile/ProfileScreen';
 
 // Creates stack for the Authentication screens
 const Auth = createStackNavigator();
@@ -56,6 +60,62 @@ const HomeStackScreen = () => {
   )
 }
 
+// Creates stack for the Map screens
+const MapStack = createStackNavigator();
+const MapStackScreen = () => {
+  return (
+    <MapStack.Navigator 
+      initialRouteName="MapScreen"
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <MapStack.Screen name="MapScreen" component={MapScreen}/>
+    </MapStack.Navigator>
+  )
+}
+
+// Creates stack for the Map screens
+const CenterStack = createStackNavigator();
+const CenterStackScreen = () => {
+  return (
+    <CenterStack.Navigator 
+      initialRouteName="CenterScreen"
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <CenterStack.Screen name="CenterScreen" component={CenterScreen}/>
+    </CenterStack.Navigator>
+  )
+}
+
+// Creates stack for the Map screens
+const RewardsStack = createStackNavigator();
+const RewardsStackScreen = () => {
+  return (
+    <RewardsStack.Navigator 
+      initialRouteName="RewardsScreen"
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <RewardsStack.Screen name="RewardsScreen" component={RewardsScreen}/>
+    </RewardsStack.Navigator>
+  )
+}
+
+// Creates stack for the Map screens
+const ProfileStack = createStackNavigator();
+const ProfileStackScreen = () => {
+  return (
+    <ProfileStack.Navigator 
+      initialRouteName="ProfileScreen"
+      screenOptions={{
+        headerShown: false,
+      }}>
+      <ProfileStack.Screen name="ProfileScreen" component={ProfileScreen}/>
+    </ProfileStack.Navigator>
+  )
+}
+
 // Creates stack for the Tab screen
 const Tab = createBottomTabNavigator();
 const TabStack = () => {
@@ -69,33 +129,29 @@ return (
                   return <Ionicons name='home-outline' size={size} color={color} />
                 }
                 return <Ionicons name='home' size={size} color={color} />
-              case 'Chat':
+              case 'Map':
                 if (!focused) {
-                  return <Ionicons name="chatbox-outline" size={size} color={color} />
+                  return <Ionicons name="map-outline" size={size} color={color} />
                 }
-                return <Ionicons  name="chatbox" size={size} color={color} />
-              case 'Notifications':
+                return <Ionicons  name="map" size={size} color={color} />
+              case 'Rewards':
                 if (!focused) {
-                  return <Ionicons name="notifications-outline" size={size} color={color} />
+                  return <Ionicons name="gift-outline" size={size} color={color} />
                 }
-                return <Ionicons name="notifications" size={size} color={color} />
+                return <Ionicons name="gift" size={size} color={color} />
               case 'Profile':
                 if (!focused) {
                   return <Ionicons name="person-outline" size={size} color={color} />
                 }
                 return <Ionicons name="person" size={size} color={color} />
-              case 'Pebble':
+              case 'Center':
                 if (!focused) {
                   return <View style={styles.circle}>
-                              <Image style={styles.image} 
-                                source={require('./assets/general/centerButton.png')} 
-                                resizeMode="contain" />
+                            <Ionicons name="qr-code-outline" size={size * 1.75} color={color} />
                           </View>
                 }
                 return <View style={[styles.circle, styles.circleHighlighted]}>
-                          <Image style={styles.image} 
-                            source={require('./assets/general/centerButtonFocused.png')} 
-                            resizeMode="contain" />
+                        <Ionicons name="qr-code-outline" size={size * 1.75} color={"#ffffff"} />
                       </View>
             }
           },
@@ -122,22 +178,22 @@ return (
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             },
           })}/>
-        <Tab.Screen name="Chat" component={HomeStackScreen} listeners={() => ({
+        <Tab.Screen name="Map" component={MapStackScreen} listeners={() => ({
             tabPress: () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             },
           })}/>
-        <Tab.Screen name="Pebble" component={HomeStackScreen} listeners={() => ({
+        <Tab.Screen name="Center" component={CenterStackScreen} listeners={() => ({
             tabPress: () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             },
           })}/>
-        <Tab.Screen name="Notifications" component={HomeStackScreen} listeners={() => ({
+        <Tab.Screen name="Rewards" component={RewardsStackScreen} listeners={() => ({
             tabPress: () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             },
           })}/>
-        <Tab.Screen name="Profile" component={HomeStackScreen} listeners={() => ({
+        <Tab.Screen name="Profile" component={ProfileStackScreen} listeners={() => ({
             tabPress: () => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
             },
