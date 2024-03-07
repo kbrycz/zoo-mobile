@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Text, RefreshControl, SafeAreaView, FlatList, StyleSheet, 
-         TouchableOpacity, Dimensions, View, InteractionManager, Platform, StatusBar, ActivityIndicator } from 'react-native';
+         Image, Dimensions, View, InteractionManager, Platform, StatusBar, ActivityIndicator } from 'react-native';
 import api from '../../api/server'
 import { Ionicons, Entypo, AntDesign  } from '@expo/vector-icons'; 
 import * as Color from '../../../global/colors'
@@ -17,6 +17,8 @@ import DeletedAccountModal from '../../components/modal/DeletedAccountModal';
 import { serverName } from '../../api/serverName';
 import BetterImage from '../../components/general/BetterImage';
 import { Store } from '../../redux/store';
+import ImageZoom from 'react-native-image-pan-zoom';
+
 
 
 // Home screen for all posts
@@ -110,51 +112,61 @@ class MapScreen extends React.Component {
 
   // Renders the jsx for the UI
   render() {
+
     return (
-            <LinearGradient style={styles.grad} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4, Color.GRADIENT5,Color.GRADIENT6]} start={{ x: 0, y: .1 }} end={{ x: 1, y: .9 }}>
-              <NoConnectionModal modalVisible={this.state.connectionModalVisible} setModalVisible={this.setConnectionModalVisible} testConnection={this.testConnection} />
-                <SafeAreaView style={{paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
-                    <View style={styles.textContainer}>
-                      {
-                        this.state.loading || !this.state.user || Object.keys(this.state.user).length == 0
-                        ? <Text style={styles.headerTextFake}></Text>
-                        : <Text style={styles.headerText}>Map</Text>
-                      }
-                    </View>
-                    <View style={styles.whiteContainer}>
-                      <View style={styles.line} />
-                      <View style={styles.mainContainer}>
-                      </View>
-                    </View>
-                </SafeAreaView>
-            </LinearGradient>
+      <LinearGradient style={styles.grad} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4, Color.GRADIENT5, Color.GRADIENT6]} start={{ x: 0, y: .1 }} end={{ x: 1, y: .9 }}>
+        <SafeAreaView style={styles.safeAreaView}>
+          <View style={styles.textContainer}>
+            <Text style={styles.headerText}>Map</Text>
+          </View>
+          <View style={styles.whiteContainer}>
+            <View style={styles.mainContainer}>
+            <View style={styles.imageContainer}>
+              <ImageZoom
+                cropWidth={Dimensions.get('window').width}
+                cropHeight={Dimensions.get('window').height * .8}
+                imageWidth={Dimensions.get('window').width}
+                imageHeight={Dimensions.get('window').height * .8}
+              >
+                <Image
+                  source={require('../../../assets/main/zoo.png')}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
+              </ImageZoom>
+            </View>
+            </View>
+          </View>
+        </SafeAreaView>
+      </LinearGradient>
     );
   }
 }
 
+
 const styles = StyleSheet.create({
-  whiteContainer: {
-    backgroundColor: Color.BACKGROUND,
-    borderTopStartRadius: 40,
-    borderTopEndRadius: 40,
+  grad: {
+    flex: 1,
   },
-  mainContainer: {
-    marginTop: Dimensions.get('window').height * .03,
-    height: Dimensions.get('window').height * .8,
-  },
-  line: {
-    marginTop: Dimensions.get('window').height * .03,
-    width: Dimensions.get('window').width * .2,
-    marginHorizontal: Dimensions.get('window').width * .4,
-    backgroundColor: Color.LIGHT_BORDER,
-    borderRadius: 1000,
-    height: 4,
+  safeAreaView: {
+    flex: 1,
+    paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   textContainer: {
-    height: Dimensions.get('window').height * .1,
     marginHorizontal: Dimensions.get('window').width * .075,
     marginBottom: Dimensions.get('window').height * .02,
   },
+  imageContainer: {
+    width: Dimensions.get('window').width,
+    height: Dimensions.get('window').height * .8,
+    overflow: 'hidden',
+    borderTopStartRadius: 40,
+    borderTopEndRadius: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: Color.BACKGROUND, // Assuming this matches the rest of your background
+  },
+  
   headerText: {
     marginTop: Dimensions.get('window').height * .05,
     fontFamily: 'QuicksandBold',
@@ -162,18 +174,26 @@ const styles = StyleSheet.create({
     color: Color.WHITE,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 2
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 2,
   },
-  headerTextFake: {
-    marginTop: Dimensions.get('window').height * .05,
-    fontSize: Dimensions.get('window').height * .025,
-    color: Color.WHITE,
-    textAlign: 'center',
-    textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: {width: -1, height: 1},
-    textShadowRadius: 2
+  whiteContainer: {
+    backgroundColor: Color.BACKGROUND,
+    borderTopStartRadius: 40,
+    borderTopEndRadius: 40,
   },
-})
+  mainContainer: {
+    height: Dimensions.get('window').height * .8,
+    alignItems: 'center',
+    backgroundColor: Color.BACKGROUND,
+    borderTopStartRadius: 40,
+    borderTopEndRadius: 40,
+    justifyContent: 'center',
+  },
 
+  image: {
+    width: '100%',
+    height: '100%',
+  },
+});
 export default MapScreen
