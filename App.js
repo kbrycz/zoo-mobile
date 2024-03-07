@@ -317,7 +317,6 @@ const styles = StyleSheet.create({
   circle: {
     backgroundColor: "#fff",
     marginBottom: Dimensions.get('window').width * .07,
-    paddingLeft: Dimensions.get('window').height * .005,
     width: Dimensions.get('window').height * .105,
     height: Dimensions.get('window').height * .105,
     borderRadius: Dimensions.get('window').width * .25,

@@ -17,6 +17,8 @@ import DeletedAccountModal from '../../components/modal/DeletedAccountModal';
 import { serverName } from '../../api/serverName';
 import BetterImage from '../../components/general/BetterImage';
 import { Store } from '../../redux/store';
+import QRCode from 'react-native-qrcode-svg'; // Import the QRCode component
+
 
 
 // Home screen for all posts
@@ -110,6 +112,9 @@ class CenterScreen extends React.Component {
 
   // Renders the jsx for the UI
   render() {
+
+    const { user } = this.state; // Destructure user from state
+
     return (
             <LinearGradient style={styles.grad} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4, Color.GRADIENT5,Color.GRADIENT6]} start={{ x: 0, y: .1 }} end={{ x: 1, y: .9 }}>
               <NoConnectionModal modalVisible={this.state.connectionModalVisible} setModalVisible={this.setConnectionModalVisible} testConnection={this.testConnection} />
@@ -118,12 +123,30 @@ class CenterScreen extends React.Component {
                       {
                         this.state.loading || !this.state.user || Object.keys(this.state.user).length == 0
                         ? <Text style={styles.headerTextFake}></Text>
-                        : <Text style={styles.headerText}>QR</Text>
+                        : <Text style={styles.headerText}>Check In</Text>
                       }
                     </View>
                     <View style={styles.whiteContainer}>
                       <View style={styles.line} />
                       <View style={styles.mainContainer}>
+                        <View style={styles.whiteBackground}>
+                        {user && user._id && (
+                          <View style={styles.qrCodeContainer}>
+                          <QRCode
+                            value={user._id} // The value to encode
+                            // Omitting the size prop so it fills the container
+                            color="black" // Color of the QR code
+                            backgroundColor="white" // Background color
+                            size={Dimensions.get('window').width * .5}
+                          />
+                        </View>
+                          )}
+                          
+                        </View>
+                        <View style={styles.whiteBackground}>
+                        <Text style={styles.subTitle}>What's this for?</Text>
+                        <Text style={styles.sub}>Present this QR code when entering the zoo! This will give you rewards points for visiting and free admission if you are one of our VIP members! Please allow 24h for reward points to show up!</Text>
+                        </View>
                       </View>
                     </View>
                 </SafeAreaView>
@@ -138,6 +161,26 @@ const styles = StyleSheet.create({
     borderTopStartRadius: 40,
     borderTopEndRadius: 40,
   },
+  whiteBackground: {
+    marginTop: Dimensions.get('window').height * .02,
+    paddingVertical: Dimensions.get('window').height * .04,
+    paddingHorizontal: Dimensions.get('window').width * .02,
+    backgroundColor: Color.WHITE,
+    marginHorizontal: Dimensions.get('window').width * .05,
+    width: Dimensions.get('window').width * .9,
+    borderRadius: 5,
+    shadowColor: Color.BLACK,
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.1,
+    shadowRadius: 1.5,
+    elevation: 2,
+    marginBottom: Dimensions.get('window').height * .03,
+
+},
+
   mainContainer: {
     marginTop: Dimensions.get('window').height * .03,
     height: Dimensions.get('window').height * .8,
@@ -174,6 +217,28 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 2
   },
+  qrCodeContainer: {
+    alignItems: 'center', // Center the QR code horizontally
+    justifyContent: 'center', // Center the QR code vertically
+    alignSelf: 'center', // Center the container itself
+    // Optional: If you want to ensure the container is square, you might need to dynamically set its height equal to its width in your component's logic.
+  },
+  sub: {
+    marginHorizontal: Dimensions.get('window').width * .05,
+    fontFamily: 'QuicksandMedium',
+    fontSize: Dimensions.get('window').height * .015,
+    color: Color.HEADER,
+    textAlign: "center",
+    opacity: 0.7
+},
+subTitle: {
+  marginHorizontal: Dimensions.get('window').width * .05,
+  marginBottom: Dimensions.get('window').height * .015,
+  fontFamily: 'QuicksandSemiBold',
+  fontSize: Dimensions.get('window').height * .015,
+  color: Color.HEADER,
+  textAlign: "center",
+},
 })
 
 export default CenterScreen

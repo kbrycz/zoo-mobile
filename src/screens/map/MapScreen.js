@@ -153,6 +153,7 @@ const styles = StyleSheet.create({
     paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0,
   },
   textContainer: {
+    height: Dimensions.get('window').height * .1,
     marginHorizontal: Dimensions.get('window').width * .075,
     marginBottom: Dimensions.get('window').height * .02,
   },
@@ -166,7 +167,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     backgroundColor: Color.BACKGROUND, // Assuming this matches the rest of your background
   },
-  
   headerText: {
     marginTop: Dimensions.get('window').height * .05,
     fontFamily: 'QuicksandBold',
@@ -174,8 +174,8 @@ const styles = StyleSheet.create({
     color: Color.WHITE,
     textAlign: 'center',
     textShadowColor: 'rgba(0, 0, 0, 0.1)',
-    textShadowOffset: { width: -1, height: 1 },
-    textShadowRadius: 2,
+    textShadowOffset: {width: -1, height: 1},
+    textShadowRadius: 2
   },
   whiteContainer: {
     backgroundColor: Color.BACKGROUND,

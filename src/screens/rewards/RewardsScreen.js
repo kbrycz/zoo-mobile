@@ -17,10 +17,11 @@ import DeletedAccountModal from '../../components/modal/DeletedAccountModal';
 import { serverName } from '../../api/serverName';
 import BetterImage from '../../components/general/BetterImage';
 import { Store } from '../../redux/store';
+import RewardComponent from '../../components/rewards/RewardComponent';
 
 
 // Home screen for all posts
-class RewardsScreen extends React.Component {
+class HomeScreen extends React.Component {
 
   // Initialize the Home screen state
   constructor() {
@@ -29,9 +30,17 @@ class RewardsScreen extends React.Component {
         refreshing: false,
         loading: true,
         loadingData: false,
+        rewards: [],
         token: null,
         user: {},
+        postIds: new Set(),
+        loadingMorePosts: true,
+        postPage: 0,
         connectionModalVisible: false,
+        accountDeletedModalVisible: false,
+        doneWithPosts: false,
+        loggingOut: false,
+        timerPosts: false
     }
   } 
 
@@ -48,15 +57,23 @@ class RewardsScreen extends React.Component {
     }
   }
 
-
+  // Tests connection when component loads, also always keeps the user up to date
   // Tests connection when component loads, also always keeps the user up to date
   componentDidMount() {
     InteractionManager.runAfterInteractions(async () => {
-      // this.checkForUpdates()
       await this.loadEverything()
-      // Gets the setup modal to start
+    })
+    this.unsubscribe = Store.subscribe(() => {
+      if (!this.state.loggingOut) {
+        this.setState({user: Store.getState().user})
+      }
     })
   } 
+
+  // Unsubscribes before the component closes TODO
+  componentWillUnmount() {
+    this.unsubscribe()
+  }
 
   // Sets the loading variable
   setLoadingData = (isLoading) => {
@@ -95,23 +112,113 @@ class RewardsScreen extends React.Component {
     }
   }
 
-  // Load everything before loading screen
+  // Load all of the asyncs before loading page
   loadEverything = async () => {
-    console.log("loading everything for profile")
-    let tokenTemp = await AsyncStorage.getItem('token')
-    let user = Store.getState().user
-    this.setState({
-      user: user,
-      token: tokenTemp,
-      loading: false
+    console.log("loading everything")
+
+    // Loads all the fonts
+    await Font.loadAsync({
+      'QuicksandMedium': require('../../../assets/fonts/Quicksand-Medium.ttf'),
+      'QuicksandSemiBold': require('../../../assets/fonts/Quicksand-SemiBold.ttf'),
+      'QuicksandBold': require('../../../assets/fonts/Quicksand-Bold.ttf'),
+    });
+
+    // Get the user obj and token from correct place
+    await this.getUserInfo()
+
+    // Get all posts
+    this.getRewards()
+
+    // Delays the refreshing of posts since the splash screen shows up first
+    setTimeout(() => {
+      this.setState({timerPosts: true})
+    }, 3000);
+
+    this.setState({loading: false})
+  }
+
+  // Updates all of the necessary data from the server when user trys to refresh
+  onRefresh = () => {
+    this.setState({refreshing: true, doneWithPosts: false, postPage: 0, timerPosts: false}, () => {
+
+      this.loadEverything()
+
+      // setting timeout for more natural look on refresh
+      setTimeout(() => {
+        this.setState({
+          refreshing: false,
+          timerPosts: true
+        })
+      }, 1000)
     })
-}
+  }
+
+  // Logs the user out of the app
+  logOut = async () => {
+    this.setState({accountDeletedModalVisible: false, loggingOut: true}, async () => {
+      await AsyncStorage.removeItem('token')
+      
+      this.props.navigation.reset({
+          index: 0,
+          routes: [{name: 'Auth'}],
+      });
+    })
+  }
+
+  getRewards = () => {
+    let rewards = [
+      {
+        id: 1,
+        title: "Brycz Zoo T shirt",
+        description: "Join us for our annual turtle race to help bring awareness to poor turtle treatment",
+        points: 1000,
+        image: "../../../assets/main/event.jpeg"
+      },
+      {
+        id: 2,
+        title: "Trading Card Pack",
+        description: "Come enjoy a night show unlike any other! A perfect date spot!",
+        points: 2000,
+        image: "../../../assets/main/event.jpeg"
+      },
+      {
+        id: 3,
+        title: "Free Admission",
+        description: "Come check out what we have to offer in terms of wedding venues!",
+        points: 3000,
+        image: "../../../assets/main/event.jpeg"
+      },
+      {
+        id: 4,
+        title: "Stuffed Animal",
+        description: "Take your kids away from their screens and say hello to growing up learning about animals!",
+        points: 4000,
+        image: "../../../assets/main/event.jpeg"
+      }
+    ]
+
+    this.setState({
+      rewards: rewards
+    })
+  }
+
+    // Renders the activity indicator for lazy loading
+    renderLoader = () => {
+      return <View style={{marginTop: Dimensions.get('window').height * .02, alignItems: 'center', marginBottom: Dimensions.get('window').height * .2,}}>
+              </View>
+    }
 
 
   // Renders the jsx for the UI
   render() {
     return (
             <LinearGradient style={styles.grad} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4, Color.GRADIENT5,Color.GRADIENT6]} start={{ x: 0, y: .1 }} end={{ x: 1, y: .9 }}>
+              {
+                this.state.loading
+                ? null
+                : <DeletedAccountModal modalVisible={this.state.accountDeletedModalVisible} setModalVisible={this.setAccountDeletedModalVisible} logOut={this.logOut} />
+              }
+            
               <NoConnectionModal modalVisible={this.state.connectionModalVisible} setModalVisible={this.setConnectionModalVisible} testConnection={this.testConnection} />
                 <SafeAreaView style={{paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
                     <View style={styles.textContainer}>
@@ -124,6 +231,31 @@ class RewardsScreen extends React.Component {
                     <View style={styles.whiteContainer}>
                       <View style={styles.line} />
                       <View style={styles.mainContainer}>
+                        <FlatList
+                          showsVerticalScrollIndicator={false}
+                          ListFooterComponent={this.renderLoader}
+                          ListHeaderComponent={
+                            <LinearGradient style={styles.pointsContainer} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3]} start={{ x: 0.5, y: .1 }} end={{ x: .5, y: .9 }}>
+                            <Text style={styles.pointsText}>Your Rewards Points:</Text>
+                              <Text style={styles.pointsNumber}>1000</Text>
+                          </LinearGradient>
+                          }
+                          refreshControl={
+                            <RefreshControl
+                              tintColor={Color.MAIN}
+                              refreshing={this.state.refreshing}
+                              onRefresh={this.onRefresh}
+                            />
+                          }
+                          style={styles.list}
+                          data={this.state.rewards}
+                          keyExtractor={reward => reward.id.toString()}
+                          renderItem={({ item, index }) => (
+                            <RewardComponent
+                              reward={item}
+                            />
+                          )}
+                        />
                       </View>
                     </View>
                 </SafeAreaView>
@@ -142,6 +274,9 @@ const styles = StyleSheet.create({
     marginTop: Dimensions.get('window').height * .03,
     height: Dimensions.get('window').height * .8,
   },
+  list: {
+    height: Dimensions.get('window').height,
+  },
   line: {
     marginTop: Dimensions.get('window').height * .03,
     width: Dimensions.get('window').width * .2,
@@ -149,6 +284,28 @@ const styles = StyleSheet.create({
     backgroundColor: Color.LIGHT_BORDER,
     borderRadius: 1000,
     height: 4,
+  },
+  iconContainer: {
+    position: 'absolute',
+    bottom: Dimensions.get('window').height * .36,
+    right: Dimensions.get('window').width * .05,
+    opacity: .8
+  },
+  viewDetailsIcon: {
+    fontSize: Dimensions.get('window').height * .035,
+    color: Color.WHITE,
+    padding: Dimensions.get('window').height * .023,
+    paddingHorizontal: Dimensions.get('window').height * .023,
+    borderRadius: Dimensions.get('window').height * .03,
+    overflow: 'hidden'
+  },
+  writePostIcon: {
+    fontSize: Dimensions.get('window').height * .04,
+    color: Color.WHITE,
+    padding: Dimensions.get('window').height * .02,
+    paddingHorizontal: Dimensions.get('window').height * .02,
+    borderRadius: Dimensions.get('window').height * .03,
+    overflow: 'hidden'
   },
   textContainer: {
     height: Dimensions.get('window').height * .1,
@@ -174,6 +331,54 @@ const styles = StyleSheet.create({
     textShadowOffset: {width: -1, height: 1},
     textShadowRadius: 2
   },
+  addButton: {
+    position: 'absolute',
+    top: Dimensions.get('window').height * .035,
+    right: 0,
+    borderRadius: 100,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  helpButton: {
+    position: 'absolute',
+    top: Dimensions.get('window').height * .035,
+    left: 0,
+    borderRadius: 100,
+    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+  },
+  addIcon: {
+    fontSize: Dimensions.get('window').height * .025,
+    padding: Dimensions.get('window').height * .014,
+    color: Color.WHITE,
+  },
+  pointsContainer: {
+    width: Dimensions.get('window').width * 0.9,
+    marginHorizontal: Dimensions.get('window').width * 0.05,
+    marginVertical: Dimensions.get('window').height * 0.01,
+    backgroundColor: Color.WHITE,
+    shadowColor: 'rgba(0,0,0,0.4)',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+    paddingVertical: Dimensions.get('window').height * 0.02,
+    paddingHorizontal: Dimensions.get('window').width * 0.05,
+    borderRadius: 10,
+    flexDirection: 'row', // Aligns children (Points text and points number) in a row
+    justifyContent: 'space-between', // Places the Points text on the left and the points number on the right
+    alignItems: 'center', // Centers the items vertically
+  },
+  pointsText: {
+    fontFamily: "QuicksandSemiBold",
+    fontSize: Dimensions.get('window').height * .017, 
+    marginBottom: Dimensions.get('window').height * .005, 
+    color: Color.WHITE,
+  },
+  pointsNumber: {
+    fontFamily: 'QuicksandBold',
+    fontSize: Dimensions.get('window').height * 0.017,
+    color: Color.WHITE, // Use the same or a different color
+  },
+
 })
 
-export default RewardsScreen
+export default HomeScreen

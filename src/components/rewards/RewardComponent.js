@@ -3,7 +3,7 @@ import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity } from 'rea
 import * as Color from '../../../global/colors';
 import { getTimestamp } from '../../functions/GetTimeAgo'; // Assuming you have a function to format the date nicely
 
-const PostComponent = ({ post }) => {
+const RewardComponent = ({ reward }) => {
 
     // Function to format the date
     const formatDate = (dateString) => {
@@ -11,20 +11,16 @@ const PostComponent = ({ post }) => {
         return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
     };
 
-    // Assuming post object has title, description, image (URL), and createdAt properties
+    // Assuming reward object has title, description, image (URL), and createdAt properties
     return (
         <View style={styles.container}>
-            <Text style={styles.title}>{post.title}</Text>
-            <Text style={styles.date}>{formatDate(post.date)}</Text>
+            <Text style={styles.title}>{reward.title}</Text>
+            <Text style={styles.points}>{reward.points} points (redeem with QR code at zoo)</Text>
             <Image
-                source={require('../../../assets/main/event.jpeg')}
+                source={require('../../../assets/main/rewards.jpeg')}
                 style={styles.image}
                 resizeMode="cover"
             />
-            <Text style={styles.description}>{post.description}</Text>
-            <TouchableOpacity style={styles.helpButton}>
-                <Text style={styles.helpButtonText}>Learn More</Text>
-            </TouchableOpacity>
         </View>
     );
 };
@@ -62,11 +58,11 @@ const styles = StyleSheet.create({
         color: Color.HEADER,
         marginBottom: Dimensions.get('window').height * .01, 
     },
-    date: {
+    points: {
         fontSize: Dimensions.get('window').height * .015,
         marginBottom: Dimensions.get('window').height * .02, 
         color: Color.HEADER,
-        opacity: .4,
+        opacity: .6,
         fontFamily: "QuicksandMedium"
     },
     imageContainer: {
@@ -84,27 +80,6 @@ const styles = StyleSheet.create({
         width: Dimensions.get('window').width * .8,
         height: Dimensions.get('window').height * .25,
     },
-    description: {
-        fontFamily: "QuicksandMedium",
-        fontSize: Dimensions.get('window').height * .014,
-        lineHeight: Dimensions.get('window').height * .026,
-        marginTop: Dimensions.get('window').height * .02,
-        color: Color.TEXT
-    },
-    helpButtonText: {
-        fontSize: Dimensions.get('window').height * .015,
-        color: Color.MAIN,
-        textAlign: "center",
-        fontFamily: "QuicksandSemiBold"
-    },
-    helpButton: {
-        borderColor: Color.MAIN,
-        borderWidth: 1,
-        paddingVertical: Dimensions.get('window').height * .015,
-        borderRadius: 5,
-        marginTop: Dimensions.get('window').height * .02,
-        width: Dimensions.get('window').width * .8,
-    },
 });
 
-export default PostComponent;
+export default RewardComponent;

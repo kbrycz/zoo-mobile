@@ -125,6 +125,9 @@ class HomeScreen extends React.Component {
     // Get the user obj and token from correct place
     await this.getUserInfo()
 
+    // Get all posts
+    this.getPosts()
+
     // Delays the refreshing of posts since the splash screen shows up first
     setTimeout(() => {
       this.setState({timerPosts: true})
@@ -161,6 +164,49 @@ class HomeScreen extends React.Component {
     })
   }
 
+  getPosts = () => {
+    let posts = [
+      {
+        id: 1,
+        title: "Brycz Zoo 5k for Turtles",
+        description: "Join us for our annual turtle race to help bring awareness to poor turtle treatment",
+        date: new Date() - 2,
+        image: "../../../assets/main/event.jpeg"
+      },
+      {
+        id: 2,
+        title: "Night Lights Coming Soon!",
+        description: "Come enjoy a night show unlike any other! A perfect date spot!",
+        date: new Date() - 3,
+        image: "../../../assets/main/event.jpeg"
+      },
+      {
+        id: 3,
+        title: "Getting Married?",
+        description: "Come check out what we have to offer in terms of wedding venues!",
+        date: new Date() - 3,
+        image: "../../../assets/main/event.jpeg"
+      },
+      {
+        id: 4,
+        title: "Need Daycare?",
+        description: "Take your kids away from their screens and say hello to growing up learning about animals!",
+        date: new Date() - 3,
+        image: "../../../assets/main/event.jpeg"
+      }
+    ]
+
+    this.setState({
+      posts: posts
+    })
+  }
+
+    // Renders the activity indicator for lazy loading
+    renderLoader = () => {
+      return <View style={{marginTop: Dimensions.get('window').height * .02, alignItems: 'center', marginBottom: Dimensions.get('window').height * .2,}}>
+              </View>
+    }
+
 
   // Renders the jsx for the UI
   render() {
@@ -184,6 +230,25 @@ class HomeScreen extends React.Component {
                     <View style={styles.whiteContainer}>
                       <View style={styles.line} />
                       <View style={styles.mainContainer}>
+                      <FlatList
+                    showsVerticalScrollIndicator={false}
+                    ListFooterComponent={this.renderLoader}
+                    refreshControl={
+                        <RefreshControl
+                            tintColor={Color.MAIN}
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.onRefresh}
+                        />
+                    }
+                    style={styles.list}
+                    data={this.state.posts}
+                    keyExtractor={post => post.id.toString()} // Make sure your posts have a unique id
+                    renderItem={({ item, index }) => (
+                        <PostComponent
+                            post={item}
+                        />
+                    )}
+                />
                       </View>
                     </View>
                 </SafeAreaView>
