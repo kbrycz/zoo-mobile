@@ -88,13 +88,6 @@ class PhoneNumberScreen extends React.Component {
       })
     }
     else {
-      // Disable when not testing DEV ONLY
-      this.setState({
-        errorMessage: "",
-        loadingData: false
-      })
-      this.props.navigation.navigate('VerifyPhoneScreen', {number: this.phone.getValue()})
-      return
 
       if (this.state.hasAlreadySent) {
         console.log("Sent already")

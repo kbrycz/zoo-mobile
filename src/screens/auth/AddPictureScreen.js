@@ -230,9 +230,11 @@ class AddPictureScreen extends React.Component {
                                     </View>
                                 </TouchableOpacity>
                                 </View>
-                            : <TouchableOpacity onPress={() => this.photoActionButton()} style={styles.imageContainer}>
+                            : <View style={styles.imagesView}>
+                                <TouchableOpacity onPress={() => this.photoActionButton()} style={styles.imageContainer}>
                                 <BetterImage style={styles.image} source={{uri: this.state.profilePicture.uri}} />
                             </TouchableOpacity>
+                            </View>
                         }
                         
                         {
@@ -367,15 +369,14 @@ const styles = StyleSheet.create({
         color: Color.HEADER,
     },
     subNote: {
-        marginBottom: Dimensions.get('window').height * .04,
+        marginBottom: Dimensions.get('window').height * .01,
         fontFamily: 'QuicksandMedium',
         fontSize: Dimensions.get('window').height * .013,
         color: Color.HEADER,
         opacity: 0.7
     },
     imagesView: {
-        marginTop: Dimensions.get('window').height * .01,
-        width: Dimensions.get('window').width * .85,
+        width: Dimensions.get('window').width,
         display: 'flex',
         flexDirection: 'row',
         flexWrap: 'wrap',
@@ -383,28 +384,48 @@ const styles = StyleSheet.create({
         marginRight: Dimensions.get('window').width * .1,
     },
     imageContainer: {
-        marginRight: Dimensions.get('window').width * .01,
-        alignItems: 'center',
+        marginHorizontal: Dimensions.get('window').width * .025,
+        width: Dimensions.get('window').width * 0.7,
+        height: Dimensions.get('window').width * 0.7,
+        borderRadius: (Dimensions.get('window').width * 0.7) / 2,
+        borderWidth: 3,
+        borderColor: Color.MAIN,
+        overflow: 'hidden',
         justifyContent: 'center',
-        marginBottom: Dimensions.get('window').height * .01,
+        alignItems: 'center',
+        marginTop: Dimensions.get('window').height * 0.025,
+        alignSelf: 'center', // Center the container
+        shadowColor: Color.BLACK,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 1,
     },
     image: {
-        width: Dimensions.get('window').width * .7,
-        height: Dimensions.get('window').width * .7,
+        width: Dimensions.get('window').width * .67,
+        height: Dimensions.get('window').width * .67,
         borderRadius: 10,
         margin: Dimensions.get('window').width * .008,
+        borderRadius: (Dimensions.get('window').width * .7) / 2,
     },
     addImageContainer: {
-        alignItems: 'center',
+        marginHorizontal: Dimensions.get('window').width * .025,
+        width: Dimensions.get('window').width * 0.7,
+        height: Dimensions.get('window').width * 0.7,
+        borderRadius: (Dimensions.get('window').width * 0.7) / 2,
+        borderWidth: 3,
+        borderColor: Color.MAIN,
+        overflow: 'hidden',
         justifyContent: 'center',
-        marginTop: Dimensions.get('window').width * .014,
+        alignItems: 'center',
+        marginTop: Dimensions.get('window').height * 0.025,
+        alignSelf: 'center', // Center the container
+        shadowColor: Color.BLACK,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 1,
         borderStyle: 'dashed',
         borderWidth: 2,
         borderColor: Color.MEDIUM_BORDER,
-        width: Dimensions.get('window').width * .7,
-        height: Dimensions.get('window').width * .7,
-        borderRadius: 10,
-        marginLeft: Dimensions.get('window').width * .015,
     },
     addIconContainer: {
         opacity: .8,
@@ -417,7 +438,7 @@ const styles = StyleSheet.create({
         fontSize: Dimensions.get('window').height * .018,
         color: Color.WHITE,
         paddingVertical: Dimensions.get('window').height * .0015,
-        paddingLeft: Dimensions.get('window').height * .003,
+        paddingLeft: Dimensions.get('window').height * .002,
         paddingRight: Dimensions.get('window').height * .001,
     },
     hint: {

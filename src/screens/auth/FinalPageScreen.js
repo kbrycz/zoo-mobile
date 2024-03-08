@@ -8,8 +8,9 @@ import { TouchableOpacity } from 'react-native-gesture-handler';
 import { LinearGradient } from 'expo-linear-gradient';
 import api from '../../api/server'
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import GeneralTextModal from '../../components/modal/GeneralTextModal';
-import LottieView from 'lottie-react-native';
+import ProfileImageComponent from '../../components/profile/ProfileImageComponent';
+import BetterImage from '../../components/general/BetterImage';
+import ViewImageModal from '../../components/modal/ViewImageModal';
 
 // Screen to enter your final page for sign up
 class FinalPageScreen extends React.Component {
@@ -23,18 +24,43 @@ class FinalPageScreen extends React.Component {
       first: '',
       modalVisible: false,
       errorMessage: false,
+      currentImageView: "",
+      viewModalVisible: false
     }
   } 
+
+    // Function to format the date
+   formatDate = (dateString) => {
+    const date = new Date(dateString);
+    return new Intl.DateTimeFormat('en-US', { month: 'long', day: 'numeric', year: 'numeric' }).format(date);
+};
+
 
   // Loads everything when the component loads
   componentDidMount() {
     this.loadEverything()
   }
 
+    // Set the view modal visible
+    setViewModalVisible = (isVis) => {
+        this.setState({
+            viewModalVisible: isVis
+        })
+    }
+
   // Loads all of the asyncs before showing page
   loadEverything = async () => {
-    this.setState({loading: false})
+    this.setState({
+        loading: false,
+        currentImageView: this.props.route.params.profilePicture})
   }
+
+  // View photo of picture
+  viewPhoto = async () => {
+    this.setState({
+        viewModalVisible: true
+    })
+    }
 
   // Signs the user up and sends them to home screen
   getStarted = async () => {
@@ -88,6 +114,7 @@ class FinalPageScreen extends React.Component {
     return (
         <LinearGradient style={styles.grad} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4, Color.GRADIENT5,Color.GRADIENT6]} start={{ x: 0, y: .1 }} end={{ x: 1, y: .9 }}>
             <SafeAreaView style={{paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
+            <ViewImageModal viewModalVisible={this.state.viewModalVisible} setViewModalVisible={this.setViewModalVisible} image={this.state.currentImageView.uri} isLocal={true}/>
             <View style={styles.backView}>
                 <TouchableOpacity onPress={this.props.navigation.goBack}>
                     <Ionicons name="chevron-back" style={styles.icon} />
@@ -101,16 +128,13 @@ class FinalPageScreen extends React.Component {
                 <ScrollView showsVerticalScrollIndicator={false}>
                     <View style={styles.container}>
                         <View style={styles.whiteBackground}>
-                            <LottieView
-                            autoPlay
-                            loop
-                                style={{
-                                width: Dimensions.get('window').width * .7,
-                                height: Dimensions.get('window').width * .7,
-                                backgroundColor: 'rgba(0,0,0,0)',
-                                }}
-                                source={require('../../../assets/lottie/woman.json')}
-                            />
+                            <TouchableOpacity onPress={() => this.viewPhoto()} style={styles.imageContainer}>
+                                <BetterImage style={styles.image} source={{uri: this.state.currentImageView.uri}} />
+                            </TouchableOpacity>
+                            <View>
+                                <Text style={styles.h}>{this.props.route.params.first} {this.props.route.params.last}</Text>
+                                <Text style={styles.h2}>{(this.formatDate(this.props.route.params.birthdate))}</Text>
+                            </View>
                         </View>
 
                         {
@@ -164,6 +188,8 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 1.5,
         elevation: 2,
+        alignItems: 'center', // Center children horizontally
+        justifyContent: 'center', // Center children vertically
     },
     container: {
         marginTop: Dimensions.get('window').height * .05,
@@ -256,6 +282,48 @@ const styles = StyleSheet.create({
         color: Color.ERROR,
         fontFamily: "QuicksandMedium"
     },
+    image: {
+        width: Dimensions.get('window').height * .11,
+        height: Dimensions.get('window').height * .11,
+        borderRadius: 1000, 
+    },
+    imageContainer: {
+        marginTop: Dimensions.get('window').height * .025,
+        width: Dimensions.get('window').height * .125,
+        height: Dimensions.get('window').height * .125,
+        shadowColor: Color.BLACK,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 1,   
+        borderRadius: 1000, 
+        justifyContent: 'center', // Center the image vertically within the container
+        alignItems: 'center', // Center the image horizontally within the container
+        borderWidth: 3,
+        borderColor: Color.MAIN,
+    },
+    h: {
+        marginTop: Dimensions.get('window').height * .02,
+        marginBottom: Dimensions.get('window').height * .015,
+        fontSize: Dimensions.get('window').height * .033,
+        textAlign: 'center',
+        textTransform: 'capitalize',
+        fontFamily: 'QuicksandBold',
+        color: Color.MAIN,
+        textShadowColor: 'rgba(0, 0, 0, 0.1)',
+        textShadowOffset: {width: -1, height: 1},
+        textShadowRadius: 2
+    },
+    h2: {
+        fontSize: Dimensions.get('window').height * .017,
+        marginBottom: Dimensions.get('window').height * .025,
+        textAlign: 'center',
+        textTransform: 'capitalize',
+        fontFamily: 'QuicksandMedium',
+        color: Color.MAIN,
+        textShadowColor: 'rgba(0, 0, 0, 0.1)',
+        textShadowOffset: {width: -1, height: 1},
+        textShadowRadius: 2
+    }
 })
 
 export default FinalPageScreen

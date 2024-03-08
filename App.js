@@ -295,8 +295,8 @@ class App extends React.Component {
     // Loads all the images
     await Asset.loadAsync([
       require('./assets/auth/light-logo.png'),
-      require('./assets/general/centerButton.png'),
-      require('./assets/general/centerButtonFocused.png'),
+      require('./assets/auth/background.jpg'),
+      require('./assets/auth/final.jpg'),
     ]);
 
     // Loads all the fonts
