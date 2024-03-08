@@ -8,15 +8,15 @@ const ProfileButtonsComponent = ({user, navigation}) => {
 
     return (
         <View style={styles.container}>
+            <TouchableOpacity style={styles.button}
+                              onPress={() => navigation.navigate('ProfileSettings', {screen: "ProfileSettingsScreen", params: {user}})}>
+                <Text style={styles.buttonText}>Profile</Text>
+                <Feather name="user" style={styles.icon} />
+            </TouchableOpacity>
             <TouchableOpacity style={styles.button} 
                               onPress={() => navigation.navigate('Account', {screen: "AccountScreen", params: {user}})}>
                 <Text style={styles.buttonText}>Account</Text>
                 <Feather name="settings" style={styles.icon} />
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button}
-                              onPress={() => navigation.navigate('Preferences', {user})}>
-                <Text style={styles.buttonText}>Preferences</Text>
-                <Feather name="user" style={styles.icon} />
             </TouchableOpacity>
             <TouchableOpacity style={styles.button}
                               onPress={() => navigation.navigate('Help')}>

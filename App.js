@@ -24,6 +24,10 @@ import MapScreen from './src/screens/map/MapScreen';
 import CenterScreen from './src/screens/center/CenterScreen';
 import RewardsScreen from './src/screens/rewards/RewardsScreen';
 import ProfileScreen from './src/screens/profile/ProfileScreen';
+import AccountScreen from './src/screens/settings/AccountScreen';
+import HelpScreen from './src/screens/settings/HelpScreen';
+import UpdateAccountScreen from './src/screens/settings/UpdateAccountScreen';
+import ProfileSettingsScreen from './src/screens/settings/ProfileSettingsScreen';
 
 // Creates stack for the Authentication screens
 const Auth = createStackNavigator();
@@ -102,16 +106,52 @@ const RewardsStackScreen = () => {
   )
 }
 
+// Creates stack for the Account screens
+const AccountStack = createStackNavigator();
+const AccountStackScreen = () => {
+  return (
+    <AccountStack.Navigator 
+      initialRouteName="AccountScreen"
+      screenOptions={{
+        headerShown: false,
+        animationEnabled: true
+      }}>
+      <AccountStack.Screen name="AccountScreen" component={AccountScreen}/>
+      <AccountStack.Screen name="UpdateAccount" component={UpdateAccountScreen}/> 
+    </AccountStack.Navigator>
+  )
+}
+
+
+// Creates stack for the Account screens
+const ProfileSettingsStack = createStackNavigator();
+const ProfileSettingsStackScreen = () => {
+  return (
+    <ProfileSettingsStack.Navigator 
+      initialRouteName="ProfileSettings"
+      screenOptions={{
+        headerShown: false,
+        animationEnabled: true
+      }}>
+      <ProfileSettingsStack.Screen name="ProfileSettingsScreen" component={ProfileSettingsScreen}/>
+    </ProfileSettingsStack.Navigator>
+  )
+}
+
 // Creates stack for the Map screens
 const ProfileStack = createStackNavigator();
 const ProfileStackScreen = () => {
   return (
     <ProfileStack.Navigator 
-      initialRouteName="ProfileScreen"
-      screenOptions={{
-        headerShown: false,
-      }}>
+    initialRouteName="ProfileScreen"
+    screenOptions={{
+      headerShown: false,
+      presentation: 'modal',
+    }}>
       <ProfileStack.Screen name="ProfileScreen" component={ProfileScreen}/>
+      <ProfileStack.Screen name="ProfileSettings" component={ProfileSettingsStackScreen}/>
+      <ProfileStack.Screen name="Account" component={AccountStackScreen}/> 
+      <ProfileStack.Screen name="Help" component={HelpScreen}/> 
     </ProfileStack.Navigator>
   )
 }

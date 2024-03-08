@@ -138,28 +138,14 @@ class ProfileScreen extends React.Component {
         <NoConnectionModal modalVisible={this.state.connectionModalVisible} setModalVisible={this.setConnectionModalVisible} testConnection={this.testConnection} />
         <TouchableOpacity style={styles.trophyContainer}>
               <View style={styles.trophyAmountContainer}>
-                  <Ionicons name="trophy" style={[styles.trophies, styles.gold]} />
-                  <Text style={styles.score}>{this.state.user.gold}</Text>
-              </View>
-              <View style={styles.trophyAmountContainer}>
-                  <Ionicons name="trophy" style={[styles.trophies, styles.silver]} />
-                  <Text style={styles.score}>{this.state.user.silver}</Text>
-              </View>
-              <View style={[styles.trophyAmountContainer, {borderRightWidth: 0,}]}>
-                  <Ionicons name="trophy" style={[styles.trophies, styles.bronze]} />
-                  <Text style={styles.score}>{this.state.user.bronze}</Text>
+                  <Text style={styles.rewards}>Rewards balance: </Text>
+                  <Text style={styles.score}>{this.state.user.currentRewards}</Text>
               </View>
           </TouchableOpacity>
         <LinearGradient style={styles.grad} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4, Color.GRADIENT5,Color.GRADIENT6]} start={{ x: 0, y: .1 }} end={{ x: 1, y: .9 }}>
           <ProfileImageComponent clickFunction={this.viewProfile} 
                                 image={null} />
           <ProfileHeadComponent user={this.state.user} token={this.state.token} navigation={this.props.navigation} />
-          <TouchableOpacity style={styles.editButton} onPress={() => this.props.navigation.navigate('EditProfile', {user: this.state.user, token: this.state.token})}>
-            <Feather name="edit" style={styles.editIcon} />
-          </TouchableOpacity>
-          <TouchableOpacity style={styles.addButton} onPress={() => this.props.navigation.navigate('ContactsAdd')}>
-            <Ionicons name="person-add-outline" style={styles.addIcon} />
-          </TouchableOpacity>
         </LinearGradient>
         <SafeAreaView>
           <ProfileButtonsComponent user={this.state.user} navigation={this.props.navigation} />
@@ -199,27 +185,19 @@ const styles = StyleSheet.create({
   trophyAmountContainer: {
       flexDirection: "row",
       flex: 1,
-      borderRightWidth: 1,
-      borderColor: 'rgba(0,0,0,.1)',
       justifyContent: 'center'
   },
-  trophies: {
-      fontSize: Dimensions.get('window').height * .025,
-  },
-  bronze: {
-      color: "#6A3805"
-  },
-  silver: {
-      color: "#B4B4B4"
-  },
-  gold: {
-      color: "#C9B037"
+  rewards: {
+      fontSize: Dimensions.get('window').height * .02,
+      fontFamily: 'QuicksandBold',
+      color: Color.MAIN,
+      textAlign: 'center'
   },
   score: {
       marginLeft: Dimensions.get('window').width * .02,
       fontSize: Dimensions.get('window').height * .02,
       fontFamily: 'QuicksandBold',
-      color: Color.DARK,
+      color: Color.MAIN,
       textAlign: 'center'
   },
   editButton: {
