@@ -11,6 +11,7 @@ import HelpModalComponent from "../modal/HelpModalComponent";
 import { TextInput } from "react-native-gesture-handler";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingIndicator from "../general/LoadingIndicator";
+import ScaleView from "../general/ScaleView";
 
 // Handles all creating post information and updates user on Penguin stages
 const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
@@ -18,16 +19,19 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
     const [loadingData, setLoadingData] = useState(false)
     const [postText, setPostText] = React.useState("")
     const [answer, setAnswer] = React.useState("")
-    const [startingConversation, setStartingConversation] = useState(false)
 
     const cancel = () => {
         setModalVisible(false)
     }
 
+    const newQuestion = () => {
+        setPostText("")
+        setAnswer("")
+        setLoadingData(false)
+    }
 
     const askQuestion = async () => {
         setAnswer("")
-        setStartingConversation(true)
         if (!postText) return; // Check if there's text to ask
         setLoadingData(true); // Indicate loading
         try {
@@ -47,7 +51,75 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
             setLoadingData(false); // Reset loading indicator
         }
     };
-    
+
+    const renderBox = () => {
+        if (loadingData) {
+            return <View style={[styles.postButton, {backgroundColor: 'rgba(0,0,0,0)'}]}>
+                                            <ActivityIndicator
+                                                animating={true}
+                                                size="small"
+                                                color={Color.MAIN}
+                                            />
+                                      </View>
+        }
+        else if (!loadingData && answer.length > 0) {
+            return <ScaleView>
+                <View style={styles.postBox}>
+                    <View style={styles.headerContainer}>
+                        <View style={styles.imageContainer}>
+                            <Image style={styles.image} source={require('../../../assets/main/scooby.jpg')} resizeMode="cover" />
+                        </View>
+                        <View style={styles.headerTextContainer}>
+                            <Text style={styles.name}>Scooby</Text>
+                            <Text style={styles.sub}>AI zoo expert</Text>
+                        </View>
+                    </View>
+                    <Text style={styles.postText}>{answer}</Text>
+                    <View style={styles.bottomLine} />
+                    <TouchableOpacity style={styles.cancelContainer} onPress={cancel} disabled={loadingData}>
+                        <Text style={styles.cancel}>Cancel</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.postButton} onPress={newQuestion} disabled={loadingData || postText.length < 1}>
+                        <Text style={styles.post}>New Question</Text>
+                    </TouchableOpacity>
+                    </View>
+            </ScaleView>
+        }
+        else {
+            return <ScaleView>
+                <View style={styles.postBox}>
+                        <View style={styles.headerContainer}>
+                            <View style={styles.imageContainer}>
+                                <BetterImage cacheKey={user.profilePicture} style={styles.image} source={{uri: serverName + user.profilePicture}} resizeMode="cover" />
+                            </View>
+                            <View style={styles.headerTextContainer}>
+                                <Text style={styles.name}>{user.first} {user.last}</Text>
+                                <Text style={styles.sub}>Limit of 10 questions per day</Text>
+                            </View>
+                        </View>
+                        <TextInput
+                            autoFocus
+                            placeholder={"Are zebras white with black stripes or black with white stripes?"}
+                            placeholderTextColor="rgba(0,0,0,.5)"
+                            style={styles.postText}
+                            multiline={true}
+                            maxLength={132}
+                            numberOfLines={1}
+                            onChangeText={setPostText}
+                            blurOnSubmit={false}
+                            value={postText}/>
+                        <View style={styles.bottomLine} />
+                        <TouchableOpacity style={styles.cancelContainer} onPress={cancel} disabled={loadingData}>
+                            <Text style={styles.cancel}>Cancel</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.postButton} onPress={askQuestion} disabled={loadingData || postText.length < 1}>
+                            <Text style={styles.post}>Ask</Text>
+                        </TouchableOpacity>
+                        </View>
+            </ScaleView>
+        }
+    }
+
     return (
             <Modal
                 animationType="slide"
@@ -71,74 +143,7 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
                     <View style={styles.whiteContainer}>
                         <View style={styles.line} />
                         <ScrollView style={styles.container}>
-                            <View style={styles.postBox}>
-                                <View style={styles.headerContainer}>
-                                    <View style={styles.imageContainer}>
-                                        <BetterImage cacheKey={user.profilePicture} style={styles.image} source={{uri: serverName + user.profilePicture}} resizeMode="cover" />
-                                    </View>
-                                    <View style={styles.headerTextContainer}>
-                                        <Text style={styles.name}>{user.first} {user.last}</Text>
-                                        <Text style={styles.sub}>Limit of 10 questions per day</Text>
-                                    </View>
-                                </View>
-                                <TextInput
-                                    autoFocus
-                                    placeholder={"Are zebras white with black stripes or black with white stripes?"}
-                                    placeholderTextColor="rgba(0,0,0,.5)"
-                                    style={styles.postText}
-                                    multiline={true}
-                                    maxLength={132}
-                                    numberOfLines={1}
-                                    onChangeText={setPostText}
-                                    blurOnSubmit={false}
-                                    value={postText}/>
-                                <View style={styles.bottomLine} />
-                                <TouchableOpacity style={styles.cancelContainer} onPress={cancel} disabled={loadingData}>
-                                    <Text style={styles.cancel}>Cancel</Text>
-                                </TouchableOpacity>
-                                {
-                                    loadingData
-                                    ? <View style={[styles.postButton, {backgroundColor: 'rgba(0,0,0,0)'}]}>
-                                            <ActivityIndicator
-                                                animating={true}
-                                                size="small"
-                                                color={Color.MAIN}
-                                            />
-                                      </View>
-                                    :   <TouchableOpacity style={styles.postButton} onPress={askQuestion} disabled={loadingData || postText.length < 1}>
-                                            <Text style={styles.post}>Ask</Text>
-                                        </TouchableOpacity>
-                                }
-
-                            </View>
-                            {
-                                !startingConversation
-                                ? null
-                                :<View style={styles.postBox}>
-                                    <>
-                                        <View style={styles.headerContainer}>
-                                            <View style={styles.imageContainer}>
-                                                <Image style={styles.image} source={require('../../../assets/main/scooby.jpg')} resizeMode="cover" />
-                                            </View>
-                                            <View style={styles.headerTextContainer}>
-                                                <Text style={styles.name}>Scooby</Text>
-                                                <Text style={styles.sub}>AI zoo expert</Text>
-                                            </View>
-                                        </View>
-                                    {
-                                        loadingData
-                                        ? <ActivityIndicator
-                                        style={styles.activity}
-                                        animating={true}
-                                        size="medium"
-                                        color={Color.MAIN}
-                                        />
-                                        : <Text style={styles.postText}>{answer}</Text>
-                                    }
-                                    </>
-                                </View>
-                            }
-
+                            {renderBox()}
                         </ScrollView>
                     </View>
                     </SafeAreaView>
