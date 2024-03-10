@@ -19,12 +19,14 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
     const [loadingData, setLoadingData] = useState(false)
     const [postText, setPostText] = React.useState("")
     const [answer, setAnswer] = React.useState("")
+    const [errorMessage, setErrorMessage] = React.useState("")
 
     const cancel = () => {
         setModalVisible(false)
     }
 
     const newQuestion = () => {
+        setErrorMessage("")
         setPostText("")
         setAnswer("")
         setLoadingData(false)
@@ -32,6 +34,7 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
 
     const askQuestion = async () => {
         setAnswer("")
+        setErrorMessage("")
         if (!postText) return; // Check if there's text to ask
         setLoadingData(true); // Indicate loading
         try {
@@ -46,7 +49,7 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
             }
         } catch (err) {
             console.log(err);
-            Alert.alert("Error", "Failed to get an answer. Please try again.");
+            setErrorMessage("Failed to get an answer. Please try again.");
         } finally {
             setLoadingData(false); // Reset loading indicator
         }
@@ -54,13 +57,7 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
 
     const renderBox = () => {
         if (loadingData) {
-            return <View style={[styles.postButton, {backgroundColor: 'rgba(0,0,0,0)'}]}>
-                                            <ActivityIndicator
-                                                animating={true}
-                                                size="small"
-                                                color={Color.MAIN}
-                                            />
-                                      </View>
+            return <LoadingIndicator loadingData={loadingData} isBottomScreen={true}/>
         }
         else if (!loadingData && answer.length > 0) {
             return <ScaleView>
@@ -99,7 +96,7 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
                         </View>
                         <TextInput
                             autoFocus
-                            placeholder={"Are zebras white with black stripes or black with white stripes?"}
+                            placeholder={"What do tortoises eat?"}
                             placeholderTextColor="rgba(0,0,0,.5)"
                             style={styles.postText}
                             multiline={true}
@@ -142,8 +139,13 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
                     </View>
                     <View style={styles.whiteContainer}>
                         <View style={styles.line} />
-                        <ScrollView style={styles.container}>
+                        <ScrollView style={styles.container} keyboardShouldPersistTaps="handled">
                             {renderBox()}
+                            {
+                                errorMessage.length > 0
+                                ? <Text style={styles.errorMessage}>{errorMessage}</Text>
+                                : null
+                            }
                         </ScrollView>
                     </View>
                     </SafeAreaView>
@@ -391,6 +393,13 @@ const styles = StyleSheet.create({
         fontSize: Dimensions.get('window').height * .02,
         color: Color.TEXT,
         opacity: .7
+    },
+    errorMessage: {
+        marginBottom: Dimensions.get('window').height * .03,
+        textAlign: 'center',
+        fontSize: Dimensions.get('window').height * .015,
+        color: Color.ERROR,
+        fontFamily: "QuicksandMedium"
     }
 });
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Alert, Modal, StyleSheet, TouchableOpacity, View, Dimensions } from "react-native";
+import { Alert, Modal, StyleSheet, TouchableOpacity, View, Dimensions, Image } from "react-native";
 import { Feather } from '@expo/vector-icons'; 
 import ImageZoom from 'react-native-image-pan-zoom';
 import { serverName } from "../../api/serverName";
@@ -7,7 +7,19 @@ import * as Color from '../../../global/colors'
 import BetterImage from "../general/BetterImage";
 
 // Modal to view an image in full screen
-const ViewImageModal = ({viewModalVisible, setViewModalVisible, image, isLocal}) => {
+const ViewImageModal = ({viewModalVisible, setViewModalVisible, image, isLocal, isInRepo}) => {
+
+  const renderImage = () => {
+    if (isLocal) {
+      return <BetterImage resizeMode="contain" style={styles.image} source={{uri: image}} />
+    } 
+    else if (isInRepo) {
+      return <BetterImage resizeMode="contain" style={styles.image} source={image} />
+    }
+    else {
+      return <BetterImage resizeMode="contain" style={styles.image} source={{uri: serverName + image}} />
+    }
+  }
     
   return (
         <Modal
@@ -31,12 +43,7 @@ const ViewImageModal = ({viewModalVisible, setViewModalVisible, image, isLocal})
                        cropHeight={Dimensions.get('window').height}
                        imageWidth={Dimensions.get('window').width}
                        imageHeight={Dimensions.get('window').height}>
-                         {
-                           isLocal
-                           ? <BetterImage resizeMode="contain" style={styles.image} source={{uri: image}} />
-                           : <BetterImage resizeMode="contain" style={styles.image} source={{uri: serverName + image}} />
-                         }
-                        
+                        {renderImage()}                        
                     </ImageZoom>
                 </View>
             </View>

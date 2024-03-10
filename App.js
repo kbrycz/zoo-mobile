@@ -296,7 +296,7 @@ class App extends React.Component {
     await Asset.loadAsync([
       require('./assets/auth/light-logo.png'),
       require('./assets/auth/background.jpg'),
-      require('./assets/auth/final.jpg'),
+      require('./assets/main/happy.jpg'),
       require('./assets/main/scooby.jpg'),
     ]);
 

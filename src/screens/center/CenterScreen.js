@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Text, RefreshControl, SafeAreaView, FlatList, StyleSheet, 
-         TouchableOpacity, Dimensions, View, InteractionManager, Platform, StatusBar, ActivityIndicator } from 'react-native';
+         TouchableOpacity, Dimensions, View, InteractionManager, Platform, StatusBar, ScrollView, Linking } from 'react-native';
 import api from '../../api/server'
 import { Ionicons, Entypo, AntDesign  } from '@expo/vector-icons'; 
 import * as Color from '../../../global/colors'
@@ -129,8 +129,11 @@ class CenterScreen extends React.Component {
                     <View style={styles.whiteContainer}>
                       <View style={styles.line} />
                       <View style={styles.mainContainer}>
+                      <ScrollView>
                         <View style={styles.whiteBackground}>
-                        {user && user._id && (
+                          <Text style={styles.subTitle}>Thanks for visiting our zoo!</Text>
+                          <Text style={styles.sub}>Present this QR code when entering the zoo! This will give you rewards points for visiting! Please allow 24h for reward points to show up!</Text>
+                          {user && user._id && (
                           <View style={styles.qrCodeContainer}>
                           <QRCode
                             value={user._id} // The value to encode
@@ -141,12 +144,11 @@ class CenterScreen extends React.Component {
                           />
                         </View>
                           )}
-                          
                         </View>
-                        <View style={styles.whiteBackground}>
-                        <Text style={styles.subTitle}>What's this for?</Text>
-                        <Text style={styles.sub}>Present this QR code when entering the zoo! This will give you rewards points for visiting and free admission if you are one of our VIP members! Please allow 24h for reward points to show up!</Text>
-                        </View>
+                        <TouchableOpacity>
+                          <Text style={styles.terms}>Curious about our memberships? Click here to learn more!</Text>
+                        </TouchableOpacity>
+                      </ScrollView>
                       </View>
                     </View>
                 </SafeAreaView>
@@ -162,7 +164,7 @@ const styles = StyleSheet.create({
     borderTopEndRadius: 40,
   },
   whiteBackground: {
-    marginTop: Dimensions.get('window').height * .02,
+    marginTop: Dimensions.get('window').height * .01,
     paddingVertical: Dimensions.get('window').height * .04,
     paddingHorizontal: Dimensions.get('window').width * .02,
     backgroundColor: Color.WHITE,
@@ -222,22 +224,34 @@ const styles = StyleSheet.create({
     justifyContent: 'center', // Center the QR code vertically
     alignSelf: 'center', // Center the container itself
     // Optional: If you want to ensure the container is square, you might need to dynamically set its height equal to its width in your component's logic.
+    marginBottom: Dimensions.get('window').height * .02,
   },
-  sub: {
-    marginHorizontal: Dimensions.get('window').width * .05,
-    fontFamily: 'QuicksandMedium',
-    fontSize: Dimensions.get('window').height * .015,
-    color: Color.HEADER,
-    textAlign: "center",
-    opacity: 0.7
-},
-subTitle: {
+sub: {
   marginHorizontal: Dimensions.get('window').width * .05,
-  marginBottom: Dimensions.get('window').height * .015,
-  fontFamily: 'QuicksandSemiBold',
+  fontFamily: 'QuicksandMedium',
   fontSize: Dimensions.get('window').height * .015,
   color: Color.HEADER,
   textAlign: "center",
+  opacity: 0.7,
+  marginBottom: Dimensions.get('window').height * .04,
+  lineHeight: Dimensions.get('window').height * .025,
+},
+subTitle: {
+  fontFamily: "QuicksandSemiBold",
+  fontSize: Dimensions.get('window').height * .02, 
+  marginBottom: Dimensions.get('window').height * .005, 
+  color: Color.HEADER,
+  marginBottom: Dimensions.get('window').height * .02, 
+  textAlign: "center"
+},
+terms: {
+  textAlign: 'center',
+  marginTop: Dimensions.get('window').height * .01,
+  fontFamily: 'QuicksandMedium',
+  marginHorizontal: Dimensions.get('window').width * .1,
+  lineHeight: Dimensions.get('window').height * .025,
+  fontSize: Dimensions.get('window').height * .013,
+  color: Color.MAIN
 },
 })
 

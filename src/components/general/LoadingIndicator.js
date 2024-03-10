@@ -5,7 +5,7 @@ import * as Color from '../../../global/colors'
 import LottieView from 'lottie-react-native';
 
 // Classic loading indicator used in page loads
-const LoadingIndicator = ({isBottomScreen, isSearch}) => {
+const LoadingIndicator = ({isBottomScreen}) => {
 
     // Component variables
     const [opacity, setOpacity] = useState(new Animated.Value(0))
@@ -20,59 +20,27 @@ const LoadingIndicator = ({isBottomScreen, isSearch}) => {
           }).start();
     }, [])
 
-    if (isSearch) {
-        return (
-            <Animated.View style={[{ 
-                opacity: opacity,
-                }, styles.animationContainer]}>
-                {
-                    isBottomScreen
-                    ? <View style={{marginTop: Dimensions.get('window').height * .15}} />
-                    : <View style={{marginTop: Dimensions.get('window').height * .45}} />
-                }
-                <ActivityIndicator
-                    style={styles.indicator}
-                    animating={true}
-                    size="large"
-                    color={Color.MAIN}
-                />
-                {/* <LottieView
-                autoPlay
-                loop
-                    style={{
-                    width: Dimensions.get('window').height * .2,
-                    height: Dimensions.get('window').height * .2,
-                    backgroundColor: 'rgba(0,0,0,.0)',
-                    }}
-                    source={require('../../../assets/lottie/search.json')}
-                /> */}
-            </Animated.View>
-        )
-    }
-
-    else {
-        return (
-            <Animated.View style={[{ 
-                opacity: opacity,
-                }, styles.animationContainer]}>
-                {
-                    isBottomScreen
-                    ? <View style={{marginTop: Dimensions.get('window').height * .15}} />
-                    : <View style={{marginTop: Dimensions.get('window').height * .4}} />
-                }
-                <LottieView
-                autoPlay
-                loop
-                    style={{
-                    width: Dimensions.get('window').height * .2,
-                    height: Dimensions.get('window').height * .2,
-                    backgroundColor: 'rgba(0,0,0,.0)',
-                    }}
-                    source={require('../../../assets/lottie/loading.json')}
-                />
-            </Animated.View>
-        )
-    }
+    return (
+        <Animated.View style={[{ 
+            opacity: opacity,
+            }, styles.animationContainer]}>
+            {
+                isBottomScreen
+                ? <View style={{marginTop: Dimensions.get('window').height * .15}} />
+                : <View style={{marginTop: Dimensions.get('window').height * .4}} />
+            }
+            <LottieView
+            autoPlay
+            loop
+                style={{
+                width: Dimensions.get('window').height * .2,
+                height: Dimensions.get('window').height * .2,
+                backgroundColor: 'rgba(0,0,0,.0)',
+                }}
+                source={require('../../../assets/lottie/loading.json')}
+            />
+        </Animated.View>
+    )
 
 }
 

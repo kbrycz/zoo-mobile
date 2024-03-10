@@ -3,6 +3,7 @@ import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity } from 'rea
 import * as Color from '../../../global/colors';
 import { getTimestamp } from '../../functions/GetTimeAgo'; // Assuming you have a function to format the date nicely
 import ScaleView from '../general/ScaleView';
+import BetterImage from '../general/BetterImage';
 
 const PostComponent = ({ post }) => {
 
@@ -18,7 +19,7 @@ const PostComponent = ({ post }) => {
             <View style={styles.container}>
                 <Text style={styles.title}>{post.title}</Text>
                 <Text style={styles.date}>{formatDate(post.date)}</Text>
-                <Image
+                <BetterImage
                     source={require('../../../assets/main/event.jpeg')}
                     style={styles.image}
                     resizeMode="cover"
