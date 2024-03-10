@@ -1,0 +1,11 @@
+- Update all of the photos to use real user images
+    - Have default photo still there
+- Clean up all code / remove unnecessary stuff
+- Create a premium pop up to learn more about premium and add to appropriate places
+- Update zoo map to be real zoo map / address
+- Collect real posts
+- Collect real rewards
+- Update twililo to be under company
+- Update gemini to be under company
+- Get AWS server for application
+- Review for android and other devices

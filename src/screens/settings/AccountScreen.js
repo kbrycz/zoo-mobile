@@ -30,7 +30,8 @@ class AccountScreen extends React.Component {
       helpText: '',
       subText: '',
       modalError: false,
-      loggingOut: false
+      loggingOut: false,
+      notifications: false
     }
   } 
 
@@ -112,6 +113,7 @@ class AccountScreen extends React.Component {
           token: tokenTemp,
           user: user,
           loading: false,
+          notifications: user.notifications
         })
     }
     catch (err) {
@@ -177,6 +179,49 @@ class AccountScreen extends React.Component {
     }
   }
 
+
+// Method to change the notification statuses
+changeNotificationStatus = async () => {
+    console.log('Starting to update notification settings...');
+    this.setState({loadingData: true});
+  
+    // Construct authorization string
+    const authStr = `Bearer ${this.state.token}`;
+    // Destructure notifications from state for clarity
+    const { notifications } = this.state;
+  
+    try {
+      // Attempt to post the updated notification settings to the server
+      const response = await api.post('/changeNotifications', { notifications: !notifications }, { headers: { Authorization: authStr } });
+  
+      if (!response) {
+        // Log and throw an error if the response is unexpectedly falsy
+        console.error('No response received from the server when updating notifications.');
+        throw new Error('Failed to update notifications due to no server response.');
+      }
+  
+      // Update local state with the new user data received from the server
+      this.setState({
+        user: response.data.user,
+        notifications: response.data.user.notifications,
+        loadingData: false,
+      });
+  
+      // Update the global state with the new user data
+      Store.dispatch(setUser(response.data.user));
+      console.log('Successfully updated notification settings.');
+    } catch (err) {
+      // Log the error and update state to reflect the failure
+      console.error('Error updating notification settings:', err.message || err);
+  
+      this.setState({
+        loadingData: false,
+        connectionModalVisible: true,
+      });
+    }
+  };
+  
+
   // Sends the user to the update account screen according to specific data
   // info: 0 = name, 1 = number, 2 = email, 3 = password
   updateAccountInfo = (typeOfChange) => {
@@ -212,28 +257,26 @@ class AccountScreen extends React.Component {
                     <ScrollView style={styles.sv}>
                         <View style={styles.mainContainer}>
                             <View style={styles.whiteBackground}>
-                                <Text style={styles.category}>Membership</Text>
-                                <TouchableOpacity style={[styles.toggleContainer, {borderTopWidth: 1}]}
-                                    onPress={() => this.updateAccountInfo(0)}>
-                                    <Text style={styles.item}>Name</Text>
+                                <Text style={styles.category}>Account</Text>
+                                <TouchableOpacity style={[styles.toggleContainer, {borderTopWidth: 1}]}>
+                                    <Text style={styles.item}>Membership</Text>
                                     <View style={styles.switchView}>
                                         <Ionicons name="chevron-forward-outline" style={styles.carrot} />
                                     </View>
                                 </TouchableOpacity>
-                                <TouchableOpacity style={styles.toggleContainer}
-                                    onPress={() => this.updateAccountInfo(2)}>
-                                    <Text style={styles.item}>Birthdate</Text>
+                                <View style={[styles.toggleContainer]}>
+                                    <Text style={styles.item}>Notifications</Text>
                                     <View style={styles.switchView}>
-                                        <Ionicons name="chevron-forward-outline" style={styles.carrot} />
+                                    <Switch
+                                        disabled={this.state.loadingData}
+                                        style={styles.item}
+                                        trackColor={{ false: Color.GRAY, true: Color.MAIN }}
+                                        thumbColor={this.state.notifications ? Color.WHITE : Color.WHITE}
+                                        onValueChange={() => this.changeNotificationStatus()}
+                                        value={this.state.notifications}
+                                    />
                                     </View>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.toggleContainer}
-                                    onPress={() => this.updateAccountInfo(3)}>
-                                    <Text style={styles.item}>Gender</Text>
-                                    <View style={styles.switchView}>
-                                        <Ionicons name="chevron-forward-outline" style={styles.carrot} />
-                                    </View>
-                                </TouchableOpacity>
+                                </View>                                    
                             </View>
                             <View style={styles.whiteBackground}>
                                 <Text style={styles.category}>Legal</Text>

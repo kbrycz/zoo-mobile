@@ -18,6 +18,7 @@ import { serverName } from '../../api/serverName';
 import BetterImage from '../../components/general/BetterImage';
 import { Store } from '../../redux/store';
 import QRCode from 'react-native-qrcode-svg'; // Import the QRCode component
+import ScaleView from '../../components/general/ScaleView';
 
 
 
@@ -135,13 +136,15 @@ class CenterScreen extends React.Component {
                           <Text style={styles.sub}>Present this QR code when entering the zoo! This will give you rewards points for visiting! Please allow 24h for reward points to show up!</Text>
                           {user && user._id && (
                           <View style={styles.qrCodeContainer}>
-                          <QRCode
-                            value={user._id} // The value to encode
-                            // Omitting the size prop so it fills the container
-                            color="black" // Color of the QR code
-                            backgroundColor="white" // Background color
-                            size={Dimensions.get('window').width * .5}
-                          />
+                            <ScaleView>
+                              <QRCode
+                              value={user._id} // The value to encode
+                              // Omitting the size prop so it fills the container
+                              color="black" // Color of the QR code
+                              backgroundColor="white" // Background color
+                              size={Dimensions.get('window').width * .5}
+                            />
+                            </ScaleView>
                         </View>
                           )}
                         </View>

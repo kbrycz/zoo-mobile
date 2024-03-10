@@ -21,6 +21,7 @@ import ProfileImageComponent from '../../components/profile/ProfileImageComponen
 import ProfileHeadComponent from '../../components/profile/ProfileHeadComponent';
 import ProfileButtonsComponent from '../../components/profile/ProfileButtonsComponent';
 import ViewImageModal from '../../components/modal/ViewImageModal';
+import RewardsModalComponent from '../../components/profile/RewardsModalComponent';
 
 
 // Home screen for all posts
@@ -36,7 +37,9 @@ class ProfileScreen extends React.Component {
         token: null,
         user: {},
         connectionModalVisible: false,
-        modalVisible: false
+        modalVisible: false,
+        leaders: [],
+        trophiesModalVisible: false
     }
   } 
 
@@ -62,6 +65,12 @@ class ProfileScreen extends React.Component {
   setModalVisible = (isVis) => {
     this.setState({modalVisible: isVis})
   }
+
+  // Set modal visible for view profile to value
+  setTrophiesModalVisible = (isVis) => {
+    this.setState({trophiesModalVisible: isVis})
+  }
+
 
   // Runs when component loads
   componentDidMount() {
@@ -117,8 +126,55 @@ class ProfileScreen extends React.Component {
         user: user,
         token: tokenTemp,
         loading: false
+      }, () => {
+        this.loadLeaders()
       })
   }
+
+// Method to load the leaderboard data
+loadLeaders = async () => {
+  console.log('Attempting to load leaderboard...');
+
+  // Indicate loading state
+  this.setState({loadingData: true});
+
+  try {
+    // Prepare authorization header
+    const authStr = `Bearer ${this.state.token}`;
+
+    // Attempt to fetch the leaderboard data
+    const response = await api.get('/getLeaderboard', {headers: {Authorization: authStr}});
+
+    // Check if the response is successful and contains the leaders data
+    if (response && response.data && response.data.leaders) {
+      console.log('Leaderboard successfully loaded:', response.data.leaders.length, 'leaders found.');
+
+      // Update the state with the leaders data
+      this.setState({
+        leaders: response.data.leaders,
+        loadingData: false, // Ensure loadingData is set to false here as well for success path
+      });
+    } else {
+      // Handle cases where the response is successful but doesn't contain expected data
+      console.warn('Received an unexpected response format when loading leaders.');
+      
+      this.setState({
+        leaders: [],
+        loadingData: false,
+      });
+    }
+  } catch (err) {
+    // Log error details including message and any available response status
+    console.error('Failed to load leaderboard:', err.message, err.response ? `Status code: ${err.response.status}` : 'No response status available.');
+
+    // Update the state to indicate loading has finished and handle error state as needed
+    this.setState({
+      leaders: [], // Consider clearing or keeping the leaders data depending on desired behavior
+      loadingData: false,
+    });
+  }
+};
+
 
 
   // Renders the jsx for the UI
@@ -148,9 +204,10 @@ class ProfileScreen extends React.Component {
     <View style={styles.bg}>
         <NoConnectionModal modalVisible={this.state.connectionModalVisible} setModalVisible={this.setConnectionModalVisible} testConnection={this.testConnection} />
         <ViewImageModal viewModalVisible={this.state.modalVisible} setViewModalVisible={this.setModalVisible} image={require('../../../assets/main/default.jpeg')} isInRepo={true}/>
-        <TouchableOpacity style={styles.trophyContainer}>
+        <RewardsModalComponent loadLeaders={this.loadLeaders} leaders={this.state.leaders} user={this.state.user} modalVisible={this.state.trophiesModalVisible} setModalVisible={this.setTrophiesModalVisible} />
+        <TouchableOpacity style={styles.trophyContainer} onPress={() => this.setTrophiesModalVisible(true)}>
               <View style={styles.trophyAmountContainer}>
-                  <Text style={styles.rewards}>Rewards balance: </Text>
+                  <Text style={styles.rewards}>Rewards Balance: </Text>
                   <Text style={styles.score}>{this.state.user.currentRewards}</Text>
               </View>
           </TouchableOpacity>

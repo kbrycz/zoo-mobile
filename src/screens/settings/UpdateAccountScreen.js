@@ -261,7 +261,7 @@ setProfilePhoto = (p) => {
 
   getProfilePhotoUI = () => {
     return <>
-    <Text style={styles.question}>We'll see this when you scan in to verify who you are!</Text>
+    <Text style={styles.titleText}>Profile Picture</Text>
         <Text style={styles.subNote}>Please use a picture of yourself!</Text>
         {
             !this.state.profilePicture
