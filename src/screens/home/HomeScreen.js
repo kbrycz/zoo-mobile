@@ -17,6 +17,7 @@ import DeletedAccountModal from '../../components/modal/DeletedAccountModal';
 import { serverName } from '../../api/serverName';
 import BetterImage from '../../components/general/BetterImage';
 import { Store } from '../../redux/store';
+import ChatModalComponent from '../../components/home/ChatModalComponent';
 
 
 // Home screen for all posts
@@ -35,6 +36,7 @@ class HomeScreen extends React.Component {
         postIds: new Set(),
         loadingMorePosts: true,
         postPage: 0,
+        modalVisible: false,
         connectionModalVisible: false,
         accountDeletedModalVisible: false,
         doneWithPosts: false,
@@ -68,6 +70,12 @@ class HomeScreen extends React.Component {
       }
     })
   } 
+
+    // Sets the modal visible
+    setModalVisible = (isVis) => {
+      this.setState({modalVisible: isVis})
+    }
+  
 
   // Unsubscribes before the component closes TODO
   componentWillUnmount() {
@@ -219,6 +227,7 @@ class HomeScreen extends React.Component {
               }
             
               <NoConnectionModal modalVisible={this.state.connectionModalVisible} setModalVisible={this.setConnectionModalVisible} testConnection={this.testConnection} />
+              <ChatModalComponent modalVisible={this.state.modalVisible} setModalVisible={this.setModalVisible} user={this.state.user} />
                 <SafeAreaView style={{paddingTop: Platform.OS === "android" ? StatusBar.currentHeight : 0}}>
                     <View style={styles.textContainer}>
                       {
@@ -230,25 +239,37 @@ class HomeScreen extends React.Component {
                     <View style={styles.whiteContainer}>
                       <View style={styles.line} />
                       <View style={styles.mainContainer}>
-                      <FlatList
-                    showsVerticalScrollIndicator={false}
-                    ListFooterComponent={this.renderLoader}
-                    refreshControl={
-                        <RefreshControl
-                            tintColor={Color.MAIN}
-                            refreshing={this.state.refreshing}
-                            onRefresh={this.onRefresh}
-                        />
-                    }
-                    style={styles.list}
-                    data={this.state.posts}
-                    keyExtractor={post => post.id.toString()} // Make sure your posts have a unique id
-                    renderItem={({ item, index }) => (
-                        <PostComponent
-                            post={item}
-                        />
-                    )}
-                />
+                      {
+                        this.state.loading || !this.state.user || Object.keys(this.state.user).length == 0
+                        ? <LoadingIndicator isBottomScreen={true} loadingData={this.state.loading} />
+                        : <>
+                            <FlatList
+                              showsVerticalScrollIndicator={false}
+                              ListFooterComponent={this.renderLoader}
+                              refreshControl={
+                                  <RefreshControl
+                                      tintColor={Color.MAIN}
+                                      refreshing={this.state.refreshing}
+                                      onRefresh={this.onRefresh}
+                                  />
+                              }
+                              style={styles.list}
+                              data={this.state.posts}
+                              keyExtractor={post => post.id.toString()} // Make sure your posts have a unique id
+                              renderItem={({ item, index }) => (
+                                  <PostComponent
+                                      post={item}
+                                  />
+                              )}
+                          />
+                          <TouchableOpacity style={styles.iconContainer} onPress={() => this.setModalVisible(true)}>
+                            <LinearGradient style={{borderRadius: Dimensions.get('window').height * .04}} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4]} start={{ x: 0.5, y: .1 }} end={{ x: .5, y: .9 }}>
+                              <Ionicons name="bulb-outline" style={styles.viewDetailsIcon} />
+                            </LinearGradient>  
+                          </TouchableOpacity>
+                        </>
+                      }
+
                       </View>
                     </View>
                 </SafeAreaView>
@@ -280,7 +301,7 @@ const styles = StyleSheet.create({
   },
   iconContainer: {
     position: 'absolute',
-    bottom: Dimensions.get('window').height * .36,
+    bottom: Dimensions.get('window').height * .15,
     right: Dimensions.get('window').width * .05,
     opacity: .8
   },

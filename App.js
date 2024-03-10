@@ -297,6 +297,7 @@ class App extends React.Component {
       require('./assets/auth/light-logo.png'),
       require('./assets/auth/background.jpg'),
       require('./assets/auth/final.jpg'),
+      require('./assets/main/scooby.jpg'),
     ]);
 
     // Loads all the fonts

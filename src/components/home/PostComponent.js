@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity } from 'react-native';
 import * as Color from '../../../global/colors';
 import { getTimestamp } from '../../functions/GetTimeAgo'; // Assuming you have a function to format the date nicely
+import ScaleView from '../general/ScaleView';
 
 const PostComponent = ({ post }) => {
 
@@ -13,19 +14,21 @@ const PostComponent = ({ post }) => {
 
     // Assuming post object has title, description, image (URL), and createdAt properties
     return (
-        <View style={styles.container}>
-            <Text style={styles.title}>{post.title}</Text>
-            <Text style={styles.date}>{formatDate(post.date)}</Text>
-            <Image
-                source={require('../../../assets/main/event.jpeg')}
-                style={styles.image}
-                resizeMode="cover"
-            />
-            <Text style={styles.description}>{post.description}</Text>
-            <TouchableOpacity style={styles.helpButton}>
-                <Text style={styles.helpButtonText}>Learn More</Text>
-            </TouchableOpacity>
-        </View>
+        <ScaleView>
+            <View style={styles.container}>
+                <Text style={styles.title}>{post.title}</Text>
+                <Text style={styles.date}>{formatDate(post.date)}</Text>
+                <Image
+                    source={require('../../../assets/main/event.jpeg')}
+                    style={styles.image}
+                    resizeMode="cover"
+                />
+                <Text style={styles.description}>{post.description}</Text>
+                <TouchableOpacity style={styles.helpButton}>
+                    <Text style={styles.helpButtonText}>Learn More</Text>
+                </TouchableOpacity>
+            </View>
+        </ScaleView>
     );
 };
 
