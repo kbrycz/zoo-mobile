@@ -231,13 +231,16 @@ class HomeScreen extends React.Component {
                     <View style={styles.whiteContainer}>
                       <View style={styles.line} />
                       <View style={styles.mainContainer}>
-                        <FlatList
+                        {
+                          this.state.loading || !this.state.user || Object.keys(this.state.user).length == 0
+                          ? <LoadingIndicator isBottomScreen={true} loadingData={this.state.loading} />
+                          : <FlatList
                           showsVerticalScrollIndicator={false}
                           ListFooterComponent={this.renderLoader}
                           ListHeaderComponent={
                             <LinearGradient style={styles.pointsContainer} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3]} start={{ x: 0.5, y: .1 }} end={{ x: .5, y: .9 }}>
                             <Text style={styles.pointsText}>Your Rewards Points:</Text>
-                              <Text style={styles.pointsNumber}>1000</Text>
+                              <Text style={styles.pointsNumber}>{this.state.user.currentRewards}</Text>
                           </LinearGradient>
                           }
                           refreshControl={
@@ -256,6 +259,8 @@ class HomeScreen extends React.Component {
                             />
                           )}
                         />
+                        }
+
                       </View>
                     </View>
                 </SafeAreaView>

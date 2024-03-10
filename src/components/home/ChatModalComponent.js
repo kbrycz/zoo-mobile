@@ -87,7 +87,8 @@ const ChatModalComponent = ({modalVisible, setModalVisible, user}) => {
                 <View style={styles.postBox}>
                         <View style={styles.headerContainer}>
                             <View style={styles.imageContainer}>
-                                <BetterImage cacheKey={user.profilePicture} style={styles.image} source={{uri: serverName + user.profilePicture}} resizeMode="cover" />
+                                <BetterImage cacheKey={user.profilePicture} style={styles.image} source={require("../../../assets/main/default.jpeg")} resizeMode="cover" />
+                                {/* <BetterImage cacheKey={user.profilePicture} style={styles.image} source={{uri: serverName + user.profilePicture}} resizeMode="cover" /> */}
                             </View>
                             <View style={styles.headerTextContainer}>
                                 <Text style={styles.name}>{user.first} {user.last}</Text>

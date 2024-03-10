@@ -117,7 +117,6 @@ const AccountStackScreen = () => {
         animationEnabled: true
       }}>
       <AccountStack.Screen name="AccountScreen" component={AccountScreen}/>
-      <AccountStack.Screen name="UpdateAccount" component={UpdateAccountScreen}/> 
     </AccountStack.Navigator>
   )
 }
@@ -134,6 +133,7 @@ const ProfileSettingsStackScreen = () => {
         animationEnabled: true
       }}>
       <ProfileSettingsStack.Screen name="ProfileSettingsScreen" component={ProfileSettingsScreen}/>
+      <ProfileSettingsStack.Screen name="UpdateAccount" component={UpdateAccountScreen}/> 
     </ProfileSettingsStack.Navigator>
   )
 }
@@ -298,6 +298,7 @@ class App extends React.Component {
       require('./assets/auth/background.jpg'),
       require('./assets/main/happy.jpg'),
       require('./assets/main/scooby.jpg'),
+      require('./assets/main/default.jpeg'),
     ]);
 
     // Loads all the fonts

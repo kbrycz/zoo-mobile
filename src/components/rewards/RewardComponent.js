@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, View, Text, Dimensions, Image, TouchableOpacity } from 'react-native';
 import * as Color from '../../../global/colors';
 import { getTimestamp } from '../../functions/GetTimeAgo'; // Assuming you have a function to format the date nicely
+import ScaleView from '../general/ScaleView';
 
 const RewardComponent = ({ reward }) => {
 
@@ -13,6 +14,7 @@ const RewardComponent = ({ reward }) => {
 
     // Assuming reward object has title, description, image (URL), and createdAt properties
     return (
+        <ScaleView>
         <View style={styles.container}>
             <Text style={styles.title}>{reward.title}</Text>
             <Text style={styles.points}>{reward.points} points (redeem with QR code at zoo)</Text>
@@ -22,6 +24,7 @@ const RewardComponent = ({ reward }) => {
                 resizeMode="cover"
             />
         </View>
+        </ScaleView>
     );
 };
 

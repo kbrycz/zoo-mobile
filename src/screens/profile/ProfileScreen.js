@@ -20,6 +20,7 @@ import { Store } from '../../redux/store';
 import ProfileImageComponent from '../../components/profile/ProfileImageComponent';
 import ProfileHeadComponent from '../../components/profile/ProfileHeadComponent';
 import ProfileButtonsComponent from '../../components/profile/ProfileButtonsComponent';
+import ViewImageModal from '../../components/modal/ViewImageModal';
 
 
 // Home screen for all posts
@@ -35,6 +36,7 @@ class ProfileScreen extends React.Component {
         token: null,
         user: {},
         connectionModalVisible: false,
+        modalVisible: false
     }
   } 
 
@@ -51,6 +53,15 @@ class ProfileScreen extends React.Component {
     }
   }
 
+  // View the profile tab of the user
+  viewProfile = ()  => {
+    this.setModalVisible(true)
+  }
+
+  // Set modal visible for view profile to value
+  setModalVisible = (isVis) => {
+    this.setState({modalVisible: isVis})
+  }
 
   // Runs when component loads
   componentDidMount() {
@@ -136,6 +147,7 @@ class ProfileScreen extends React.Component {
     return (
     <View style={styles.bg}>
         <NoConnectionModal modalVisible={this.state.connectionModalVisible} setModalVisible={this.setConnectionModalVisible} testConnection={this.testConnection} />
+        <ViewImageModal viewModalVisible={this.state.modalVisible} setViewModalVisible={this.setModalVisible} image={require('../../../assets/main/default.jpeg')} isInRepo={true}/>
         <TouchableOpacity style={styles.trophyContainer}>
               <View style={styles.trophyAmountContainer}>
                   <Text style={styles.rewards}>Rewards balance: </Text>
@@ -144,7 +156,7 @@ class ProfileScreen extends React.Component {
           </TouchableOpacity>
         <LinearGradient style={styles.grad} colors={[Color.GRADIENT1, Color.GRADIENT2, Color.GRADIENT3, Color.GRADIENT4, Color.GRADIENT5,Color.GRADIENT6]} start={{ x: 0, y: .1 }} end={{ x: 1, y: .9 }}>
           <ProfileImageComponent clickFunction={this.viewProfile} 
-                                image={null} />
+                                image={require("../../../assets/main/default.jpeg")} />
           <ProfileHeadComponent user={this.state.user} token={this.state.token} navigation={this.props.navigation} />
         </LinearGradient>
         <SafeAreaView>

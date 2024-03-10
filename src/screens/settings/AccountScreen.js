@@ -212,7 +212,7 @@ class AccountScreen extends React.Component {
                     <ScrollView style={styles.sv}>
                         <View style={styles.mainContainer}>
                             <View style={styles.whiteBackground}>
-                                <Text style={styles.category}>Personal Information</Text>
+                                <Text style={styles.category}>Membership</Text>
                                 <TouchableOpacity style={[styles.toggleContainer, {borderTopWidth: 1}]}
                                     onPress={() => this.updateAccountInfo(0)}>
                                     <Text style={styles.item}>Name</Text>

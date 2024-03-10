@@ -27,6 +27,7 @@ class UpdateAccountScreen extends React.Component {
       hasFound: false,
       first: "",
       last: "",
+      profilePhoto: null,
       birthdate: new Date(),
       gender: -1,
       errorMessage: "",
@@ -57,6 +58,11 @@ class UpdateAccountScreen extends React.Component {
     this.setState({last: l})
   }
 
+// Sets the gender variable
+setProfilePhoto = (p) => {
+    this.setState({profilePhoto: p})
+}
+
   // Sets the first variable
   setBirthdate = (d) => {
     this.setState({birthdate: d})
@@ -74,6 +80,9 @@ class UpdateAccountScreen extends React.Component {
         case 0:
             this.updateName()
             return
+        case 1:
+            this.updateProfilePhoto()
+            return
         case 2:
             this.updateBirthdate()
             return
@@ -86,7 +95,7 @@ class UpdateAccountScreen extends React.Component {
 
   // Updates the first and last name of the user
   updateName = async () => {
-    this.setState({loadingData: true})
+    this.setState({loadingData: true, successMessage: "", errorMessage: ""})
     const authStr = 'Bearer '.concat(this.state.token); 
     Keyboard.dismiss()
     try {
@@ -115,7 +124,7 @@ class UpdateAccountScreen extends React.Component {
 
   // Updates the birthdate of the user on the server
   updateBirthdate = async () => {
-    this.setState({loadingData: true})
+    this.setState({loadingData: true, successMessage: "", errorMessage: ""})
     const authStr = 'Bearer '.concat(this.state.token); 
     try {
         const response = await api.post('/changeBirthdate', {birthdate: this.state.birthdate.toString()}, {headers: {Authorization: authStr}})
@@ -140,9 +149,36 @@ class UpdateAccountScreen extends React.Component {
     }
   }
 
+    // Updates the profile picture of the user on the server
+    updateProfilePhoto = async () => {
+        this.setState({loadingData: true, successMessage: "", errorMessage: ""})
+        const authStr = 'Bearer '.concat(this.state.token); 
+        try {
+            const response = await api.post('/changeProfilePhoto', {profilePhoto: this.state.profilePhoto}, {headers: {Authorization: authStr}})
+            if (!response) {
+                throw "error in updating profile photo"
+            }
+            this.updateUser(response.data.user)
+            this.setState({
+                loadingData: false,
+                profilePhoto: response.data.user.profilePhoto,
+                successMessage: "Successfully updated your profile picture",
+                errorMessage: ""
+            })
+        }
+        catch (err) {
+            console.log(err)
+            this.setState({
+                loadingData: false,
+                errorMessage: "Unable to update your profile picture",
+                successMessage: ""
+            })
+        }
+      }
+
   // Updates the gender of the user
   updateGender = async () => {
-    this.setState({loadingData: true})
+    this.setState({loadingData: true, successMessage: "", errorMessage: ""})
     const authStr = 'Bearer '.concat(this.state.token); 
     try {
         const response = await api.post('/changeGender', {gender: this.state.gender}, {headers: {Authorization: authStr}})
@@ -223,24 +259,63 @@ class UpdateAccountScreen extends React.Component {
             </View>
   }
 
+  getProfilePhotoUI = () => {
+    return <>
+    <Text style={styles.question}>We'll see this when you scan in to verify who you are!</Text>
+        <Text style={styles.subNote}>Please use a picture of yourself!</Text>
+        {
+            !this.state.profilePicture
+            ? <View style={styles.imagesView}>
+                <TouchableOpacity onPress={this.addPhoto}>
+                    <View style={styles.addImageContainer}>
+                        <View style={styles.addIconContainer}>
+                            <View style={{borderRadius: Dimensions.get('window').height * .03, backgroundColor: Color.MAIN}} >
+                                <Ionicons name="add" style={styles.addIcon} />
+                            </View>
+                        </View>
+                    </View>
+                </TouchableOpacity>
+                </View>
+            : <View style={styles.imagesView}>
+                <TouchableOpacity onPress={() => this.photoActionButton()} style={styles.imageContainer}>
+                <BetterImage style={styles.image} source={{uri: this.state.profilePicture.uri}} />
+            </TouchableOpacity>
+            </View>
+        }
+        
+        {
+            this.state.profilePicture
+            ? <Text style={styles.hint}>* Click to view or delete.</Text>
+            : null
+        }
+        {
+            this.state.errorMessage != ""
+            ? <Text style={styles.errorMessage}>{this.state.errorMessage}</Text>
+            : null
+        }
+    </>
+  }
+
   // Gets the birthdate UI set up
   getBirthdateUI = () => {
+    const birthdate = this.state.birthdate instanceof Date ? this.state.birthdate : new Date();
     return <View style={styles.container}>
-                <Text style={styles.titleText}>Birthdate</Text>
-                <DatePicker
-                    textColor="rgba(0,0,0,.9)"
-                    display={"spinner"}
-                    maximumDate={new Date().setFullYear(new Date().getFullYear() - 18)}
-                    minimumDate={new Date().setFullYear(new Date().getFullYear() - 99)}
-                    style={styles.datePickerStyle}
-                    value={this.state.birthdate} //initial date from state
-                    mode="date" //The enum of date, datetime and time
-                    onChange={(event, date) => {
-                        this.setState({birthdate: date})
-                    }}
-                />
-            </View>
-  }   
+        <Text style={styles.titleText}>Birthdate</Text>
+        <DatePicker
+            textColor="rgba(0,0,0,.9)"
+            display={"spinner"}
+            maximumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 10))}
+            minimumDate={new Date(new Date().setFullYear(new Date().getFullYear() - 99))}
+            style={styles.datePickerStyle}
+            value={birthdate} // Use safeguarded birthdate
+            mode="date" //The enum of date, datetime and time
+            onChange={(event, date) => {
+                this.setState({birthdate: date || this.state.birthdate}); // Fallback to current state if date is undefined
+            }}
+        />
+    </View>
+  }
+  
 
   // Highlights the bubble that is pressed
   getHighlighted = (current, compare) => {
@@ -286,6 +361,8 @@ class UpdateAccountScreen extends React.Component {
       switch (this.state.typeOfChange) {
           case 0:
               return this.getNameUI()
+          case 1:
+              return this.getProfilePhotoUI()
           case 2: 
               return this.getBirthdateUI()
           case 3:
@@ -314,6 +391,9 @@ class UpdateAccountScreen extends React.Component {
   getHeaderText = () => {
       if (this.props.route.params.typeOfChange === 0) {
           return <Text style={styles.headerText}>Edit Name</Text>
+      }
+      else if (this.props.route.params.typeOfChange === 1) {
+        return <Text style={styles.headerText}>Edit Profile Picture</Text>
       }
       else if (this.props.route.params.typeOfChange === 2) {
         return <Text style={styles.headerText}>Edit Birthdate</Text>
@@ -569,6 +649,85 @@ const styles = StyleSheet.create({
         fontFamily: 'QuicksandSemiBold',
         fontSize: Dimensions.get('window').height * .018,
         color: Color.MAIN,
+    },
+    question: {
+        marginBottom: Dimensions.get('window').height * .02,
+        fontFamily: 'QuicksandMedium',
+        fontSize: Dimensions.get('window').height * .017,
+        color: Color.HEADER,
+    },
+    subNote: {
+        marginBottom: Dimensions.get('window').height * .01,
+        fontFamily: 'QuicksandMedium',
+        fontSize: Dimensions.get('window').height * .013,
+        color: Color.HEADER,
+        opacity: 0.7
+    },
+    imagesView: {
+        width: Dimensions.get('window').width,
+        display: 'flex',
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginLeft: Dimensions.get('window').width * .01,
+        marginRight: Dimensions.get('window').width * .1,
+    },
+    imageContainer: {
+        marginHorizontal: Dimensions.get('window').width * .025,
+        width: Dimensions.get('window').width * 0.7,
+        height: Dimensions.get('window').width * 0.7,
+        borderRadius: (Dimensions.get('window').width * 0.7) / 2,
+        borderWidth: 3,
+        borderColor: Color.MAIN,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: Dimensions.get('window').height * 0.025,
+        alignSelf: 'center', // Center the container
+        shadowColor: Color.BLACK,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 1,
+    },
+    image: {
+        width: Dimensions.get('window').width * .67,
+        height: Dimensions.get('window').width * .67,
+        borderRadius: 10,
+        margin: Dimensions.get('window').width * .008,
+        borderRadius: (Dimensions.get('window').width * .7) / 2,
+    },
+    addImageContainer: {
+        marginHorizontal: Dimensions.get('window').width * .025,
+        width: Dimensions.get('window').width * 0.7,
+        height: Dimensions.get('window').width * 0.7,
+        borderRadius: (Dimensions.get('window').width * 0.7) / 2,
+        borderWidth: 3,
+        borderColor: Color.MAIN,
+        overflow: 'hidden',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: Dimensions.get('window').height * 0.025,
+        alignSelf: 'center', // Center the container
+        shadowColor: Color.BLACK,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.3,
+        shadowRadius: 1,
+        borderStyle: 'dashed',
+        borderWidth: 2,
+        borderColor: Color.MEDIUM_BORDER,
+    },
+    addIconContainer: {
+        opacity: .8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: Dimensions.get('window').width * .7,
+        width: Dimensions.get('window').width * .7,
+    },
+    addIcon: {
+        fontSize: Dimensions.get('window').height * .018,
+        color: Color.WHITE,
+        paddingVertical: Dimensions.get('window').height * .0015,
+        paddingLeft: Dimensions.get('window').height * .002,
+        paddingRight: Dimensions.get('window').height * .001,
     },
 })
 

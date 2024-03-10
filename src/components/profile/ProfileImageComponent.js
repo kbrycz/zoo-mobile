@@ -14,7 +14,8 @@ const ProfileImageComponent = ({image, clickFunction}) => {
                     !image
                     ? null
                     : <TouchableOpacity onPress={clickFunction}>
-                        <BetterImage isWhite={true} cacheKey={null} style={styles.image} source={{uri: serverName + image}} />
+                        <BetterImage isWhite={true} cacheKey={null} style={styles.image} source={image} />
+                        {/* <BetterImage isWhite={true} cacheKey={null} style={styles.image} source={{uri: serverName + image}} /> */}
                         {/* <BetterImage isWhite={true} cacheKey={noCache ? null : image.split('/')[1].split(".")[0]} style={styles.image} source={{uri: serverName + image}} /> */}
                       </TouchableOpacity>
                 }
