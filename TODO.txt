@@ -5,7 +5,12 @@
 - Update zoo map to be real zoo map / address
 - Collect real posts
 - Collect real rewards
+- Update mongo to be under company
+- Get app store account
 - Update twililo to be under company
 - Update gemini to be under company
 - Get AWS server for application
 - Review for android and other devices
+- Clean out photos and files (lottie and other images)
+- Handle notification on both server and client side
+- Add user tiers (admin, worker, user)
